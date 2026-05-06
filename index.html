@@ -1,100 +1,351 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Treasure Hunt Game</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* CSS inline untuk backup jika style.css error */
-        *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Poppins',sans-serif;height:100vh;overflow:hidden;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}#map{height:100vh;width:100%}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cari Kotak GPS PRO FINAL</title>
+
+<style>
+body { margin:0; font-family:'Segoe UI'; }
+#map { height:100vh; }
+
+.panel {
+  position:fixed; top:10px; right:10px;
+  width:300px; background:white;
+  padding:14px; border-radius:12px;
+  box-shadow:0 6px 25px rgba(0,0,0,0.3);
+  z-index:1000;
+}
+
+button {
+  width:100%; padding:12px;
+  margin:6px 0; border:none;
+  border-radius:10px;
+  font-weight:bold;
+}
+
+.btn-admin { background:#f0ad4e; color:white; }
+.btn-import { background:#5bc0de; color:white; }
+.btn-start { background:#4CAF50; color:white; }
+.btn-export { background:#ff9800; color:white; }
+
+.hidden { display:none; }
+.found { text-decoration:line-through; color:green; }
+</style>
 </head>
+
 <body>
-    <div id="loginScreen" class="screen active">
-        <div class="login-container">
-            <h1>🗺️ Treasure Hunt</h1>
-            <p>Cari 10 kotak harta karun!</p>
-            <div class="mode-selector">
-                <button id="playerBtn" class="mode-btn active">Pemain</button>
-                <button id="adminBtn" class="mode-btn">Admin</button>
-            </div>
-            <input type="text" id="playerId" placeholder="Masukkan ID Pemain">
-            <button id="startBtn" class="start-btn">Mulai Permainan</button>
-            <div style="margin-top:20px;font-size:12px;color:#666">
-                <strong>Ganti YOUR_API_KEY di script.js dengan Google Maps API Key Anda!</strong>
-            </div>
-        </div>
-    </div>
 
-    <div id="gameScreen" class="screen">
-        <div class="header">
-            <div class="score">
-                <span>Kotak: <span id="foundCount">0</span>/10</span>
-            </div>
-            <button id="backBtn">←</button>
-        </div>
-        <div class="map-container">
-            <div id="map"></div>
-            <div id="locationStatus">
-                <div id="accuracy">Mencari lokasi...</div>
-                <div id="distance">--</div>
-            </div>
-        </div>
-    </div>
+<div id="map"></div>
 
-    <div id="adminScreen" class="screen">
-        <div class="admin-header">
-            <h2>⚙️ Admin Panel</h2>
-            <button id="adminBackBtn">←</button>
-        </div>
-        <div class="admin-content">
-            <div class="admin-section">
-                <h3>1. Set Area</h3>
-                <div id="adminMap" style="height:300px;border-radius:10px;"></div>
-                <button id="setCenterBtn">Set Center</button>
-            </div>
-            <div class="admin-section">
-                <h3>2. Buat Kotak</h3>
-                <input type="number" id="treasureCount" value="10" min="1" max="20">
-                <button id="generateTreasures">Generate</button>
-                <div id="treasureList"></div>
-            </div>
-            <div class="admin-section">
-                <h3>3. Aktifkan</h3>
-                <button id="startGameAdmin">🚀 Mulai Game</button>
-                <div id="gameStatus"></div>
-            </div>
-        </div>
-    </div>
+<div class="panel">
 
-    <!-- Modals -->
-    <div id="quizModal" class="modal">
-        <div class="modal-content">
-            <h3>🎉 Kotak Ditemukan!</h3>
-            <div id="quizContent"></div>
-            <button id="quizSubmit">Jawab</button>
-        </div>
-    </div>
+<h3>🎮 Mode Player</h3>
 
-    <div id="foundModal" class="modal">
-        <div class="modal-content">
-            <h3>✅</h3>
-            <p id="foundMessage"></p>
-            <button id="continueBtn">Lanjut</button>
-        </div>
-    </div>
+<button id="importBtn" class="btn-import">📥 Import Game</button>
+<input type="file" id="fileInput" class="hidden">
 
-    <div id="completeModal" class="modal">
-        <div class="modal-content">
-            <h2>🏆 MENANG!</h2>
-            <button id="restartBtn">Main Lagi</button>
-        </div>
-    </div>
+<button id="startBtn" class="btn-start">▶️ Mulai Game</button>
 
-    <!-- Google Maps API - GANTI YOUR_API_KEY! -->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSSvbZkADfSSplx6nVWj6s5h1fogrcaA4&callback=initMaps&libraries=geometry"></script>
-    <script>/* Script.js content akan di-inline di bawah */</script>
+<div id="progress">Progress: 0/10</div>
+<div id="playerList"></div>
+
+<hr>
+
+<button id="adminBtn" class="btn-admin">🔒 Admin</button>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel" class="hidden">
+  <h4>🔧 Admin Mode</h4>
+  <button id="drawBtn">✏️ Gambar Area</button>
+  <button id="stopBtn">⏹️ Stop</button>
+  <button id="exportBtn" class="btn-export">📤 Export Game</button>
+</div>
+
+</div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSSvbZkADfSSplx6nVWj6s5h1fogrcaA4&libraries=geometry"></script>
+
+<script>
+const ADMIN_PASSWORD = "1234";
+
+let map, polygon=null, drawing=false, path=[];
+let mode='player';
+
+let allBoxes=[];
+let activeBoxes=[];
+let unusedBoxes=[];
+
+let playerMarker;
+let visibleMarkers=[];
+let watchId;
+
+// INIT
+function init(){
+  map=new google.maps.Map(document.getElementById("map"),{
+    center:{lat:-8.17,lng:113.7},
+    zoom:18,
+    mapTypeId:'satellite'
+  });
+
+  map.addListener("click",mapClick);
+
+  setMode('player');
+}
+window.onload=init;
+
+// MODE
+function setMode(m){
+  mode=m;
+
+  adminPanel.classList.toggle("hidden",m!=='admin');
+
+  if(m==='player'){
+    map.setOptions({
+      gestureHandling:"none",
+      zoomControl:false,
+      draggable:false,
+      scrollwheel:false,
+      disableDoubleClickZoom:true
+    });
+  } else {
+    map.setOptions({
+      gestureHandling:"auto",
+      zoomControl:true,
+      draggable:true,
+      scrollwheel:true
+    });
+  }
+}
+
+// ADMIN LOGIN
+adminBtn.onclick=()=>{
+  let pw=prompt("Password admin:");
+  if(pw===ADMIN_PASSWORD){
+    setMode('admin');
+  } else alert("Password salah!");
+};
+
+// DRAW AREA
+drawBtn.onclick=()=>{
+  drawing=true;
+  path=[];
+  if(polygon) polygon.setMap(null);
+  alert("Klik minimal 3 titik");
+};
+
+stopBtn.onclick=()=>{
+  drawing=false;
+
+  if(path.length<3) return alert("Minimal 3 titik");
+
+  polygon=new google.maps.Polygon({
+    paths:path,
+    map:map,
+    fillColor:"red",
+    fillOpacity:0.2,
+    strokeColor:"red",
+    clickable:false
+  });
+
+  alert("Area selesai");
+};
+
+// ADMIN TAMBAH SOAL
+function mapClick(e){
+
+  if(mode!=='admin') return;
+
+  if(drawing){
+    path.push(e.latLng);
+    new google.maps.Marker({position:e.latLng,map:map});
+    return;
+  }
+
+  if(!polygon) return alert("Buat area dulu");
+
+  let inside=google.maps.geometry.poly.containsLocation(e.latLng,polygon);
+  if(!inside) return alert("Klik di dalam area");
+
+  let q=prompt("Pertanyaan:");
+  if(!q) return;
+
+  let a=prompt("Jawaban:");
+  if(!a) return;
+
+  allBoxes.push({
+    lat:e.latLng.lat(),
+    lng:e.latLng.lng(),
+    question:q,
+    answer:a.toLowerCase(),
+    found:false,
+    opened:false
+  });
+
+  new google.maps.Marker({position:e.latLng,map:map});
+}
+
+// EXPORT
+exportBtn.onclick=()=>{
+
+  if(allBoxes.length===0){
+    alert("Belum ada soal!");
+    return;
+  }
+
+  const data={
+    polygonPath: path.map(p=>({lat:p.lat(),lng:p.lng()})),
+    boxes: allBoxes
+  };
+
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download="game-gps.json";
+  a.click();
+};
+
+// IMPORT
+importBtn.onclick=()=>fileInput.click();
+
+fileInput.onchange=e=>{
+  let file=e.target.files[0];
+  let reader=new FileReader();
+
+  reader.onload=()=>{
+    const data=JSON.parse(reader.result);
+
+    allBoxes=data.boxes||[];
+
+    if(data.polygonPath && data.polygonPath.length>=3){
+      const poly=data.polygonPath.map(p=>new google.maps.LatLng(p.lat,p.lng));
+
+      if(polygon) polygon.setMap(null);
+
+      polygon=new google.maps.Polygon({
+        paths:poly,
+        map:map,
+        fillColor:"red",
+        fillOpacity:0.2,
+        strokeColor:"red",
+        clickable:false
+      });
+    }
+
+    alert("Game berhasil dimuat!");
+  };
+
+  reader.readAsText(file);
+};
+
+// START GAME
+startBtn.onclick=()=>{
+  if(allBoxes.length<10) return alert("Minimal 10 soal");
+
+  let shuffled=[...allBoxes].sort(()=>Math.random()-0.5);
+
+  activeBoxes=shuffled.slice(0,10);
+  unusedBoxes=shuffled.slice(10);
+
+  activeBoxes.forEach(b=>{
+    b.found=false;
+    b.opened=false;
+  });
+
+  startPlayer();
+};
+
+// PLAYER
+function startPlayer(){
+
+  if(watchId) navigator.geolocation.clearWatch(watchId);
+
+  watchId=navigator.geolocation.watchPosition(pos=>{
+
+    let me=new google.maps.LatLng(pos.coords.latitude,pos.coords.longitude);
+
+    map.setCenter(me);
+    map.setZoom(20);
+
+    if(!playerMarker){
+      playerMarker=new google.maps.Marker({
+        position:me,
+        map:map,
+        icon:{
+          path:google.maps.SymbolPath.CIRCLE,
+          scale:10,
+          fillColor:"#2196F3",
+          fillOpacity:1,
+          strokeColor:"white",
+          strokeWeight:2
+        }
+      });
+    } else playerMarker.setPosition(me);
+
+    updateBoxes(me);
+
+  },()=>alert("GPS error"),{enableHighAccuracy:true});
+}
+
+// UPDATE BOX
+function updateBoxes(me){
+
+  visibleMarkers.forEach(m=>m.setMap(null));
+  visibleMarkers=[];
+
+  activeBoxes.forEach((box,i)=>{
+
+    if(box.found) return;
+
+    let pos=new google.maps.LatLng(box.lat,box.lng);
+    let d=google.maps.geometry.spherical.computeDistanceBetween(me,pos);
+
+    if(d<=5){
+      let m=new google.maps.Marker({
+        position:pos,
+        map:map,
+        icon:"http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
+      });
+      visibleMarkers.push(m);
+    }
+
+    if(d<=2 && !box.opened){
+      box.opened=true;
+
+      setTimeout(()=>{
+        let ans=prompt(box.question);
+
+        if(ans && ans.toLowerCase()===box.answer){
+          box.found=true;
+          alert("🎉 Benar!");
+        } else {
+          alert("❌ Salah!");
+
+          if(unusedBoxes.length>0){
+            activeBoxes[i]=unusedBoxes.shift();
+          } else {
+            activeBoxes.splice(i,1);
+          }
+        }
+
+        updateUI();
+
+      },200);
+    }
+
+  });
+}
+
+// UI
+function updateUI(){
+  let found=activeBoxes.filter(b=>b.found).length;
+  progress.textContent="Progress: "+found+"/10";
+
+  playerList.innerHTML=activeBoxes.map((b,i)=>
+    `<div class="${b.found?'found':''}">📦 Soal ${i+1}</div>`
+  ).join("");
+}
+</script>
+
 </body>
 </html>
