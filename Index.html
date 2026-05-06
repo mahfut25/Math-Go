@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treasure Hunt Game</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen active">
+        <div class="login-container">
+            <h1>🗺️ Treasure Hunt</h1>
+            <p>Cari 10 kotak harta karun!</p>
+            <div class="mode-selector">
+                <button id="playerBtn" class="mode-btn active">Pemain</button>
+                <button id="adminBtn" class="mode-btn">Admin</button>
+            </div>
+            <input type="text" id="playerId" placeholder="Masukkan ID Pemain" maxlength="10">
+            <button id="startBtn" class="start-btn">Mulai Permainan</button>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="gameScreen" class="screen">
+        <div class="header">
+            <div class="score">
+                <span>Kotak Ditemukan: <span id="foundCount">0</span>/10</span>
+            </div>
+            <button id="backBtn" class="back-btn">← Kembali</button>
+        </div>
+        
+        <div class="map-container">
+            <div id="map"></div>
+            <div id="locationStatus" class="location-status">
+                <div id="accuracy">Mencari lokasi...</div>
+                <div id="distance">Jarak ke kotak terdekat: --</div>
+            </div>
+        </div>
+
+        <!-- Quiz Modal -->
+        <div id="quizModal" class="modal">
+            <div class="modal-content">
+                <h3>🎉 Kotak Ditemukan!</h3>
+                <div id="quizContent"></div>
+                <button id="quizSubmit" class="quiz-submit">Jawab</button>
+            </div>
+        </div>
+
+        <!-- Found Treasure Modal -->
+        <div id="foundModal" class="modal">
+            <div class="modal-content success">
+                <h3>✅ Selamat!</h3>
+                <p id="foundMessage"></p>
+                <button id="continueBtn" class="continue-btn">Lanjut Berburu</button>
+            </div>
+        </div>
+
+        <!-- Game Complete Modal -->
+        <div id="completeModal" class="modal">
+            <div class="modal-content complete">
+                <h2>🏆 Selamat! Kamu Menang!</h2>
+                <p>Semua 10 kotak berhasil ditemukan!</p>
+                <button id="restartBtn" class="restart-btn">Main Lagi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminScreen" class="screen">
+        <div class="admin-header">
+            <h2>⚙️ Panel Admin</h2>
+            <button id="adminBackBtn" class="back-btn">← Kembali</button>
+        </div>
+        
+        <div class="admin-content">
+            <div class="admin-section">
+                <h3>1. Tentukan Area Permainan</h3>
+                <div id="adminMap"></div>
+                <button id="setCenterBtn" class="admin-btn">Set Center Area</button>
+            </div>
+            
+            <div class="admin-section">
+                <h3>2. Buat Kotak Harta Karun</h3>
+                <input type="number" id="treasureCount" min="1" max="20" value="10" placeholder="Jumlah kotak">
+                <button id="generateTreasures" class="admin-btn primary">Generate Kotak Acak</button>
+                <div id="treasureList"></div>
+            </div>
+            
+            <div class="admin-section">
+                <h3>3. Mulai Permainan</h3>
+                <button id="startGameAdmin" class="admin-btn primary large">🚀 Aktifkan Permainan</button>
+                <div id="gameStatus"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSSvbZkADfSSplx6nVWj6s5h1fogrcaA4&callback=initMaps&libraries=geometry"></script>
+    <script src="script.js"></script>
+</body>
+</html>
