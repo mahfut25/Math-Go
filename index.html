@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treasure Hunt Game</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS inline untuk backup jika style.css error */
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Poppins',sans-serif;height:100vh;overflow:hidden;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}#map{height:100vh;width:100%}
+    </style>
+</head>
+<body>
+    <div id="loginScreen" class="screen active">
+        <div class="login-container">
+            <h1>🗺️ Treasure Hunt</h1>
+            <p>Cari 10 kotak harta karun!</p>
+            <div class="mode-selector">
+                <button id="playerBtn" class="mode-btn active">Pemain</button>
+                <button id="adminBtn" class="mode-btn">Admin</button>
+            </div>
+            <input type="text" id="playerId" placeholder="Masukkan ID Pemain">
+            <button id="startBtn" class="start-btn">Mulai Permainan</button>
+            <div style="margin-top:20px;font-size:12px;color:#666">
+                <strong>Ganti YOUR_API_KEY di script.js dengan Google Maps API Key Anda!</strong>
+            </div>
+        </div>
+    </div>
+
+    <div id="gameScreen" class="screen">
+        <div class="header">
+            <div class="score">
+                <span>Kotak: <span id="foundCount">0</span>/10</span>
+            </div>
+            <button id="backBtn">←</button>
+        </div>
+        <div class="map-container">
+            <div id="map"></div>
+            <div id="locationStatus">
+                <div id="accuracy">Mencari lokasi...</div>
+                <div id="distance">--</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="adminScreen" class="screen">
+        <div class="admin-header">
+            <h2>⚙️ Admin Panel</h2>
+            <button id="adminBackBtn">←</button>
+        </div>
+        <div class="admin-content">
+            <div class="admin-section">
+                <h3>1. Set Area</h3>
+                <div id="adminMap" style="height:300px;border-radius:10px;"></div>
+                <button id="setCenterBtn">Set Center</button>
+            </div>
+            <div class="admin-section">
+                <h3>2. Buat Kotak</h3>
+                <input type="number" id="treasureCount" value="10" min="1" max="20">
+                <button id="generateTreasures">Generate</button>
+                <div id="treasureList"></div>
+            </div>
+            <div class="admin-section">
+                <h3>3. Aktifkan</h3>
+                <button id="startGameAdmin">🚀 Mulai Game</button>
+                <div id="gameStatus"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="quizModal" class="modal">
+        <div class="modal-content">
+            <h3>🎉 Kotak Ditemukan!</h3>
+            <div id="quizContent"></div>
+            <button id="quizSubmit">Jawab</button>
+        </div>
+    </div>
+
+    <div id="foundModal" class="modal">
+        <div class="modal-content">
+            <h3>✅</h3>
+            <p id="foundMessage"></p>
+            <button id="continueBtn">Lanjut</button>
+        </div>
+    </div>
+
+    <div id="completeModal" class="modal">
+        <div class="modal-content">
+            <h2>🏆 MENANG!</h2>
+            <button id="restartBtn">Main Lagi</button>
+        </div>
+    </div>
+
+    <!-- Google Maps API - GANTI YOUR_API_KEY! -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSSvbZkADfSSplx6nVWj6s5h1fogrcaA4&callback=initMaps&libraries=geometry"></script>
+    <script>/* Script.js content akan di-inline di bawah */</script>
+</body>
+</html>
