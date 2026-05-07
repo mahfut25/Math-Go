@@ -151,9 +151,7 @@ input[type="text"]{
 
 <div id="map"></div>
 
-<!-- =========================
-PANEL
-========================= -->
+<!-- PANEL -->
 
 <div class="panel" id="mainPanel">
 
@@ -164,12 +162,6 @@ PANEL
 <div class="panelContent">
 
 <h3>🎮 Mode Player</h3>
-
-<button id="importBtn" class="btn-import">
-📥 Import Game
-</button>
-
-<input type="file" id="fileInput" class="hidden">
 
 <input type="text"
 id="playerName"
@@ -288,7 +280,74 @@ function init(){
   updateTimerDisplay();
 }
 
-window.onload=init;
+window.onload=()=>{
+
+  init();
+
+  autoLoadGame();
+};
+
+// =========================
+// AUTO LOAD GAME.JSON
+// =========================
+
+async function autoLoadGame(){
+
+  try{
+
+    const response =
+      await fetch("game.json");
+
+    if(!response.ok){
+
+      console.log("game.json tidak ditemukan");
+
+      return;
+    }
+
+    const data =
+      await response.json();
+
+    allBoxes = data.boxes || [];
+
+    gameDuration =
+      data.gameDuration || 30;
+
+    timerInput.value =
+      gameDuration;
+
+    if(data.polygonPath){
+
+      path = data.polygonPath;
+
+      polygon = path;
+
+      if(polygonLayer){
+
+        map.removeLayer(
+          polygonLayer
+        );
+      }
+
+      polygonLayer =
+        L.polygon(path,{
+
+          color:'red',
+
+          fillOpacity:0.2
+
+        }).addTo(map);
+    }
+
+    alert(
+      "🎮 Game berhasil dimuat!"
+    );
+
+  }catch(err){
+
+    console.log(err);
+  }
+}
 
 // =========================
 // MODE
@@ -492,54 +551,9 @@ exportBtn.onclick=()=>{
 
   a.href=URL.createObjectURL(blob);
 
-  a.download="game-gps.json";
+  a.download="game.json";
 
   a.click();
-};
-
-// =========================
-// IMPORT
-// =========================
-
-importBtn.onclick=()=>fileInput.click();
-
-fileInput.onchange=e=>{
-
-  let file=e.target.files[0];
-
-  let reader=new FileReader();
-
-  reader.onload=()=>{
-
-    const data=JSON.parse(reader.result);
-
-    allBoxes=data.boxes||[];
-
-    gameDuration=data.gameDuration||30;
-
-    timerInput.value=gameDuration;
-
-    if(data.polygonPath){
-
-      path=data.polygonPath;
-
-      polygon=path;
-
-      if(polygonLayer){
-
-        map.removeLayer(polygonLayer);
-      }
-
-      polygonLayer=L.polygon(path,{
-        color:'red',
-        fillOpacity:0.2
-      }).addTo(map);
-    }
-
-    alert("Game berhasil dimuat!");
-  };
-
-  reader.readAsText(file);
 };
 
 // =========================
