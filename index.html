@@ -557,7 +557,7 @@ function updateBoxes(me){
     let d=google.maps.geometry.spherical
       .computeDistanceBetween(me,pos);
 
-    if(d<=5){
+    if(d<=12){
 
       let m=new google.maps.Marker({
         position:pos,
@@ -571,7 +571,7 @@ function updateBoxes(me){
       visibleMarkers.push(m);
     }
 
-    if(d<=2 && !box.opened){
+    if(d<=5 && !box.opened){
 
       box.opened=true;
 
