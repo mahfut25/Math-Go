@@ -409,7 +409,6 @@ startBtn.onclick=()=>{
     return alert("Masukkan nama pemain!");
   }
 
-  // hanya bisa diisi sekali selama game
   if(!gameStarted){
 
     currentPlayerName=inputName;
@@ -564,9 +563,9 @@ function updateBoxes(me){
         position:pos,
         map:map,
         icon:{
-  url:"https://cdn-icons-png.flaticon.com/512/3097/3097133.png",
-  scaledSize:new google.maps.Size(45,45)
-}
+          url:"https://cdn-icons-png.flaticon.com/512/3097/3097133.png",
+          scaledSize:new google.maps.Size(45,45)
+        }
       });
 
       visibleMarkers.push(m);
@@ -599,6 +598,55 @@ function updateBoxes(me){
             activeBoxes.splice(i,1);
 
           }
+        }
+
+        // =========================
+        // PETUNJUK KOTAK LAIN
+        // =========================
+
+        let remainingBoxes = activeBoxes.filter(b =>
+          !b.found && b !== box
+        );
+
+        if(remainingBoxes.length > 0){
+
+          let hintBox = remainingBoxes[
+            Math.floor(Math.random() * remainingBoxes.length)
+          ];
+
+          let hintPos = new google.maps.LatLng(
+            hintBox.lat,
+            hintBox.lng
+          );
+
+          let distanceHint =
+            google.maps.geometry.spherical
+              .computeDistanceBetween(me, hintPos);
+
+          let direction = "";
+
+          let latDiff = hintBox.lat - me.lat();
+          let lngDiff = hintBox.lng - me.lng();
+
+          if(latDiff > 0.00001){
+            direction += "Utara ";
+          } else {
+            direction += "Selatan ";
+          }
+
+          if(lngDiff > 0.00001){
+            direction += "Timur";
+          } else {
+            direction += "Barat";
+          }
+
+          alert(
+            "🧭 Petunjuk kotak lain:\n\n" +
+            "Arah: " + direction + "\n" +
+            "Jarak sekitar: " +
+            Math.round(distanceHint) +
+            " meter"
+          );
         }
 
         updateUI();
