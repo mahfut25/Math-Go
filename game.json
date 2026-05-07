@@ -1,0 +1,155 @@
+{
+  "gameDuration": 60,
+  "polygonPath": [
+    {
+      "lat": -8.196297150589075,
+      "lng": 113.63625586517733
+    },
+    {
+      "lat": -8.19902628739393,
+      "lng": 113.63612711914462
+    },
+    {
+      "lat": -8.199100621597431,
+      "lng": 113.63720000275057
+    },
+    {
+      "lat": -8.198463470830832,
+      "lng": 113.63766134270114
+    },
+    {
+      "lat": -8.195575041219959,
+      "lng": 113.63774717338961
+    }
+  ],
+  "boxes": [
+    {
+      "lat": -8.195829903499908,
+      "lng": 113.63763452061099,
+      "question": "5*15",
+      "answer": "75",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.19621219661368,
+      "lng": 113.63702834137362,
+      "question": "50-13",
+      "answer": "37",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.196812183676448,
+      "lng": 113.6367172051279,
+      "question": "5*7",
+      "answer": "35",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.19630246021192,
+      "lng": 113.63763452061099,
+      "question": "98-56",
+      "answer": "42",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.197895343869673,
+      "lng": 113.63759160526675,
+      "question": "60/3",
+      "answer": "20",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.197375002576377,
+      "lng": 113.63705516346377,
+      "question": "7*8",
+      "answer": "56",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.197470575518018,
+      "lng": 113.63642216213626,
+      "question": "13*13",
+      "answer": "169",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.198314802171728,
+      "lng": 113.6363041449396,
+      "question": "apa ibukota indonesia?",
+      "answer": "jakarta",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.197959059083288,
+      "lng": 113.6371517229883,
+      "question": "6*6",
+      "answer": "36",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.1964298911393,
+      "lng": 113.63653481491488,
+      "question": "dalam zona waktu, kabupaten jember termasuk dalam zona waktu apa? (WIT, WITA, WIB)",
+      "answer": "wib",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.197927201477754,
+      "lng": 113.63663673885745,
+      "question": "1 kilometer berapa meter?",
+      "answer": "1000",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.197077664388846,
+      "lng": 113.63764524944705,
+      "question": "15 menit berapa detik?",
+      "answer": "900",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.19846878042476,
+      "lng": 113.63711953648013,
+      "question": "50 ons berapa kg?",
+      "answer": "5",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.19691306636803,
+      "lng": 113.63636851795596,
+      "question": "1 liter berapa cc?",
+      "answer": "1000",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.19902628739393,
+      "lng": 113.63682449348849,
+      "question": "2 hektare berapa meter persegi?",
+      "answer": "20000",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.197470575518018,
+      "lng": 113.63761306293887,
+      "question": "jika kamu berkendara dengan kecepatan 60km/jam, berapa waktu yang dibutuhkan untuk mencapai jarak 30 km? (dalam menit)",
+      "answer": "30",
+      "found": false,
+      "opened": false
+    }
+  ]
+}
