@@ -19,6 +19,10 @@ body{
   height:100vh;
 }
 
+/* =========================
+PANEL
+========================= */
+
 .panel{
   position:fixed;
   top:10px;
@@ -31,6 +35,38 @@ body{
   z-index:1000;
   max-height:95vh;
   overflow:auto;
+  transition:0.3s;
+}
+
+/* =========================
+MINIMIZE PANEL
+========================= */
+
+.panel.minimized{
+  width:60px;
+  height:60px;
+  overflow:hidden;
+  padding:0;
+  border-radius:50%;
+}
+
+.panel.minimized .panelContent{
+  display:none;
+}
+
+#togglePanelBtn{
+  position:absolute;
+  top:8px;
+  left:8px;
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  border:none;
+  background:#333;
+  color:white;
+  font-size:20px;
+  cursor:pointer;
+  z-index:2000;
 }
 
 button{
@@ -115,7 +151,17 @@ input[type="text"]{
 
 <div id="map"></div>
 
-<div class="panel">
+<!-- =========================
+PANEL
+========================= -->
+
+<div class="panel" id="mainPanel">
+
+<button id="togglePanelBtn">
+✖
+</button>
+
+<div class="panelContent">
 
 <h3>🎮 Mode Player</h3>
 
@@ -184,6 +230,7 @@ min="1">
 
 </div>
 
+</div>
 </div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -860,6 +907,40 @@ function updateUI(){
 
   ).join("");
 }
+
+// =========================
+// MINIMIZE PANEL
+// =========================
+
+const mainPanel =
+  document.getElementById("mainPanel");
+
+const togglePanelBtn =
+  document.getElementById("togglePanelBtn");
+
+let minimized=false;
+
+togglePanelBtn.onclick=()=>{
+
+  minimized=!minimized;
+
+  if(minimized){
+
+    mainPanel.classList.add(
+      "minimized"
+    );
+
+    togglePanelBtn.innerHTML="☰";
+
+  }else{
+
+    mainPanel.classList.remove(
+      "minimized"
+    );
+
+    togglePanelBtn.innerHTML="✖";
+  }
+};
 
 </script>
 
