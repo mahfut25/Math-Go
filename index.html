@@ -3,15 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Cari Kotak GPS PRO FINAL</title>
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
 <style>
-body {
+
+body{
   margin:0;
   font-family:'Segoe UI';
 }
 
-#map {
+#map{
   height:100vh;
 }
 
@@ -103,6 +107,7 @@ input[type="text"]{
   border-radius:10px;
   font-weight:bold;
 }
+
 </style>
 </head>
 
@@ -114,53 +119,85 @@ input[type="text"]{
 
 <h3>🎮 Mode Player</h3>
 
-<button id="importBtn" class="btn-import">📥 Import Game</button>
+<button id="importBtn" class="btn-import">
+📥 Import Game
+</button>
+
 <input type="file" id="fileInput" class="hidden">
 
-<input type="text" id="playerName" placeholder="Masukkan nama pemain">
+<input type="text"
+id="playerName"
+placeholder="Masukkan nama pemain">
 
-<button id="startBtn" class="btn-start">▶️ Mulai Game</button>
+<button id="startBtn" class="btn-start">
+▶️ Mulai Game
+</button>
 
-<div id="timerDisplay">⏳ 00:00</div>
+<div id="timerDisplay">
+⏳ 00:00
+</div>
 
-<div id="playerInfo">👤 Pemain: -</div>
+<div id="playerInfo">
+👤 Pemain: -
+</div>
 
-<div id="progress">Progress: 0/10</div>
+<div id="progress">
+Progress: 0/10
+</div>
 
 <div id="playerList"></div>
 
 <hr>
 
-<button id="adminBtn" class="btn-admin">🔒 Admin</button>
+<button id="adminBtn" class="btn-admin">
+🔒 Admin
+</button>
 
-<!-- ADMIN PANEL -->
 <div id="adminPanel" class="hidden">
 
-  <h4>🔧 Admin Mode</h4>
+<h4>🔧 Admin Mode</h4>
 
-  <div class="settingBox">
-    <label>⏰ Waktu Permainan (menit)</label>
-    <input type="number" id="timerInput" value="30" min="1">
-  </div>
+<div class="settingBox">
 
-  <button id="drawBtn">✏️ Gambar Area</button>
+<label>
+⏰ Waktu Permainan (menit)
+</label>
 
-  <button id="stopBtn">⏹️ Stop</button>
+<input type="number"
+id="timerInput"
+value="30"
+min="1">
 
-  <button id="exportBtn" class="btn-export">📤 Export Game</button>
+</div>
+
+<button id="drawBtn">
+✏️ Gambar Area
+</button>
+
+<button id="stopBtn">
+⏹️ Stop
+</button>
+
+<button id="exportBtn" class="btn-export">
+📤 Export Game
+</button>
 
 </div>
 
 </div>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSSvbZkADfSSplx6nVWj6s5h1fogrcaA4&libraries=geometry"></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
 
 const ADMIN_PASSWORD = "1234";
 
-let map, polygon=null, drawing=false, path=[];
-let mode='player';
+let map;
+let polygon=null;
+let polygonLayer=null;
+
+let drawing=false;
+let path=[];
 
 let allBoxes=[];
 let activeBoxes=[];
@@ -177,16 +214,27 @@ let gameDuration=30;
 let currentPlayerName="";
 let gameStarted=false;
 
+let mode='player';
+
+// =========================
 // INIT
+// =========================
+
 function init(){
 
-  map=new google.maps.Map(document.getElementById("map"),{
-    center:{lat:-8.17,lng:113.7},
-    zoom:18,
-    mapTypeId:'satellite'
-  });
+  map = L.map('map').setView(
+    [-8.17,113.7],
+    18
+  );
 
-  map.addListener("click",mapClick);
+  L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+      attribution:'© OpenStreetMap'
+    }
+  ).addTo(map);
+
+  map.on('click', mapClick);
 
   setMode('player');
 
@@ -195,36 +243,39 @@ function init(){
 
 window.onload=init;
 
+// =========================
 // MODE
+// =========================
+
 function setMode(m){
 
   mode=m;
 
-  adminPanel.classList.toggle("hidden",m!=='admin');
+  adminPanel.classList.toggle(
+    "hidden",
+    m!=='admin'
+  );
 
   if(m==='player'){
 
-    map.setOptions({
-      gestureHandling:"none",
-      zoomControl:false,
-      draggable:false,
-      scrollwheel:false,
-      disableDoubleClickZoom:true
-    });
+    map.dragging.disable();
+    map.touchZoom.disable();
+    map.doubleClickZoom.disable();
+    map.scrollWheelZoom.disable();
 
-  } else {
+  }else{
 
-    map.setOptions({
-      gestureHandling:"auto",
-      zoomControl:true,
-      draggable:true,
-      scrollwheel:true
-    });
-
+    map.dragging.enable();
+    map.touchZoom.enable();
+    map.doubleClickZoom.enable();
+    map.scrollWheelZoom.enable();
   }
 }
 
+// =========================
 // ADMIN LOGIN
+// =========================
+
 adminBtn.onclick=()=>{
 
   let pw=prompt("Password admin:");
@@ -233,21 +284,26 @@ adminBtn.onclick=()=>{
 
     setMode('admin');
 
-  } else {
+  }else{
 
     alert("Password salah!");
-
   }
 };
 
+// =========================
 // DRAW AREA
+// =========================
+
 drawBtn.onclick=()=>{
 
   drawing=true;
 
   path=[];
 
-  if(polygon) polygon.setMap(null);
+  if(polygonLayer){
+
+    map.removeLayer(polygonLayer);
+  }
 
   alert("Klik minimal 3 titik");
 };
@@ -256,45 +312,50 @@ stopBtn.onclick=()=>{
 
   drawing=false;
 
-  if(path.length<3)
-    return alert("Minimal 3 titik");
+  if(path.length<3){
 
-  polygon=new google.maps.Polygon({
-    paths:path,
-    map:map,
-    fillColor:"red",
-    fillOpacity:0.2,
-    strokeColor:"red",
-    clickable:false
-  });
+    return alert("Minimal 3 titik");
+  }
+
+  polygonLayer=L.polygon(path,{
+    color:'red',
+    fillOpacity:0.2
+  }).addTo(map);
+
+  polygon=path;
 
   alert("Area selesai");
 };
 
-// ADMIN TAMBAH SOAL
+// =========================
+// MAP CLICK
+// =========================
+
 function mapClick(e){
 
   if(mode!=='admin') return;
 
   if(drawing){
 
-    path.push(e.latLng);
+    path.push([
+      e.latlng.lat,
+      e.latlng.lng
+    ]);
 
-    new google.maps.Marker({
-      position:e.latLng,
-      map:map
-    });
+    L.marker(e.latlng).addTo(map);
 
     return;
   }
 
-  if(!polygon)
+  if(!polygon){
+
     return alert("Buat area dulu");
+  }
 
-  let inside=google.maps.geometry.poly.containsLocation(e.latLng,polygon);
+  if(!insidePolygon(e.latlng, polygon)){
 
-  if(!inside)
     return alert("Klik di dalam area");
+  }
 
   let q=prompt("Pertanyaan:");
 
@@ -305,21 +366,56 @@ function mapClick(e){
   if(!a) return;
 
   allBoxes.push({
-    lat:e.latLng.lat(),
-    lng:e.latLng.lng(),
+
+    lat:e.latlng.lat,
+    lng:e.latlng.lng,
+
     question:q,
+
     answer:a.toLowerCase(),
+
     found:false,
     opened:false
   });
 
-  new google.maps.Marker({
-    position:e.latLng,
-    map:map
-  });
+  L.marker(e.latlng).addTo(map);
 }
 
+// =========================
+// POINT IN POLYGON
+// =========================
+
+function insidePolygon(point, vs){
+
+  let x=point.lat;
+  let y=point.lng;
+
+  let inside=false;
+
+  for(let i=0,j=vs.length-1;i<vs.length;j=i++){
+
+    let xi=vs[i][0];
+    let yi=vs[i][1];
+
+    let xj=vs[j][0];
+    let yj=vs[j][1];
+
+    let intersect=
+      ((yi>y)!=(yj>y))
+      &&
+      (x < (xj-xi)*(y-yi)/(yj-yi)+xi);
+
+    if(intersect)
+      inside=!inside;
+  }
+
+  return inside;
+}
+
+// =========================
 // EXPORT
+// =========================
+
 exportBtn.onclick=()=>{
 
   if(allBoxes.length===0){
@@ -328,16 +424,14 @@ exportBtn.onclick=()=>{
     return;
   }
 
-  gameDuration=parseInt(timerInput.value) || 30;
+  gameDuration=
+    parseInt(timerInput.value)||30;
 
   const data={
 
     gameDuration:gameDuration,
 
-    polygonPath:path.map(p=>({
-      lat:p.lat(),
-      lng:p.lng()
-    })),
+    polygonPath:path,
 
     boxes:allBoxes
   };
@@ -356,7 +450,10 @@ exportBtn.onclick=()=>{
   a.click();
 };
 
+// =========================
 // IMPORT
+// =========================
+
 importBtn.onclick=()=>fileInput.click();
 
 fileInput.onchange=e=>{
@@ -371,27 +468,25 @@ fileInput.onchange=e=>{
 
     allBoxes=data.boxes||[];
 
-    gameDuration=data.gameDuration || 30;
+    gameDuration=data.gameDuration||30;
 
     timerInput.value=gameDuration;
 
-    if(data.polygonPath && data.polygonPath.length>=3){
+    if(data.polygonPath){
 
-      const poly=data.polygonPath.map(
-        p=>new google.maps.LatLng(p.lat,p.lng)
-      );
+      path=data.polygonPath;
 
-      if(polygon)
-        polygon.setMap(null);
+      polygon=path;
 
-      polygon=new google.maps.Polygon({
-        paths:poly,
-        map:map,
-        fillColor:"red",
-        fillOpacity:0.2,
-        strokeColor:"red",
-        clickable:false
-      });
+      if(polygonLayer){
+
+        map.removeLayer(polygonLayer);
+      }
+
+      polygonLayer=L.polygon(path,{
+        color:'red',
+        fillOpacity:0.2
+      }).addTo(map);
     }
 
     alert("Game berhasil dimuat!");
@@ -400,12 +495,17 @@ fileInput.onchange=e=>{
   reader.readAsText(file);
 };
 
+// =========================
 // START GAME
+// =========================
+
 startBtn.onclick=()=>{
 
-  const inputName=playerName.value.trim();
+  const inputName=
+    playerName.value.trim();
 
   if(inputName===""){
+
     return alert("Masukkan nama pemain!");
   }
 
@@ -415,23 +515,28 @@ startBtn.onclick=()=>{
 
     playerName.value=currentPlayerName;
 
-    playerInfo.textContent="👤 Pemain: "+currentPlayerName;
+    playerInfo.textContent=
+      "👤 Pemain: "+currentPlayerName;
 
     playerName.disabled=true;
 
     gameStarted=true;
   }
 
-  if(allBoxes.length<10)
-    return alert("Minimal 10 soal");
+  if(allBoxes.length<10){
 
-  let shuffled=[...allBoxes].sort(()=>Math.random()-0.5);
+    return alert("Minimal 10 soal");
+  }
+
+  let shuffled=[...allBoxes]
+    .sort(()=>Math.random()-0.5);
 
   activeBoxes=shuffled.slice(0,10);
 
   unusedBoxes=shuffled.slice(10);
 
   activeBoxes.forEach(b=>{
+
     b.found=false;
     b.opened=false;
   });
@@ -443,12 +548,16 @@ startBtn.onclick=()=>{
   startPlayer();
 };
 
+// =========================
 // TIMER
+// =========================
+
 function startGameTimer(){
 
   clearInterval(gameTimer);
 
-  gameDuration=parseInt(timerInput.value) || 30;
+  gameDuration=
+    parseInt(timerInput.value)||30;
 
   timeLeft=gameDuration*60;
 
@@ -472,22 +581,33 @@ function startGameTimer(){
 
 function updateTimerDisplay(){
 
-  let minutes=Math.floor(timeLeft/60);
+  let minutes=
+    Math.floor(timeLeft/60);
 
   let seconds=timeLeft%60;
 
-  let m=String(minutes).padStart(2,'0');
+  let m=
+    String(minutes).padStart(2,'0');
 
-  let s=String(seconds).padStart(2,'0');
+  let s=
+    String(seconds).padStart(2,'0');
 
-  timerDisplay.textContent=`⏳ ${m}:${s}`;
+  timerDisplay.textContent=
+    `⏳ ${m}:${s}`;
 }
 
+// =========================
 // GAME OVER
+// =========================
+
 function endGame(){
 
-  if(watchId)
-    navigator.geolocation.clearWatch(watchId);
+  if(watchId){
+
+    navigator.geolocation.clearWatch(
+      watchId
+    );
+  }
 
   gameStarted=false;
 
@@ -496,55 +616,113 @@ function endGame(){
   alert("⏰ Waktu habis!");
 }
 
-// PLAYER
+// =========================
+// PLAYER GPS
+// =========================
+
 function startPlayer(){
 
-  if(watchId)
-    navigator.geolocation.clearWatch(watchId);
+  if(watchId){
 
-  watchId=navigator.geolocation.watchPosition(pos=>{
-
-    let me=new google.maps.LatLng(
-      pos.coords.latitude,
-      pos.coords.longitude
+    navigator.geolocation.clearWatch(
+      watchId
     );
+  }
 
-    map.setCenter(me);
+  watchId=
+    navigator.geolocation.watchPosition(
 
-    map.setZoom(20);
+    pos=>{
 
-    if(!playerMarker){
+      let lat=pos.coords.latitude;
+      let lng=pos.coords.longitude;
 
-      playerMarker=new google.maps.Marker({
-        position:me,
-        map:map,
-        icon:{
-          path:google.maps.SymbolPath.CIRCLE,
-          scale:10,
-          fillColor:"#2196F3",
-          fillOpacity:1,
-          strokeColor:"white",
-          strokeWeight:2
-        }
-      });
+      let me=[lat,lng];
 
-    } else {
+      map.setView(me,20);
 
-      playerMarker.setPosition(me);
+      if(!playerMarker){
 
+        playerMarker=L.circleMarker(
+          me,
+          {
+            radius:10
+          }
+        ).addTo(map);
+
+      }else{
+
+        playerMarker.setLatLng(me);
+      }
+
+      updateBoxes(me);
+
+    },
+
+    ()=>alert("GPS error"),
+
+    {
+      enableHighAccuracy:true
     }
-
-    updateBoxes(me);
-
-  },()=>alert("GPS error"),{
-    enableHighAccuracy:true
-  });
+  );
 }
 
+// =========================
+// DISTANCE
+// =========================
+
+function getDistance(
+  lat1,
+  lon1,
+  lat2,
+  lon2
+){
+
+  const R=6371000;
+
+  const dLat=
+    (lat2-lat1)*Math.PI/180;
+
+  const dLon=
+    (lon2-lon1)*Math.PI/180;
+
+  const a=
+
+    Math.sin(dLat/2)*
+    Math.sin(dLat/2)
+
+    +
+
+    Math.cos(lat1*Math.PI/180)
+
+    *
+
+    Math.cos(lat2*Math.PI/180)
+
+    *
+
+    Math.sin(dLon/2)
+
+    *
+
+    Math.sin(dLon/2);
+
+  return R*2*Math.atan2(
+    Math.sqrt(a),
+    Math.sqrt(1-a)
+  );
+}
+
+// =========================
 // UPDATE BOX
+// =========================
+
 function updateBoxes(me){
 
-  visibleMarkers.forEach(m=>m.setMap(null));
+  visibleMarkers.forEach(m=>{
+
+    map.removeLayer(m);
+  });
 
   visibleMarkers=[];
 
@@ -552,24 +730,39 @@ function updateBoxes(me){
 
     if(box.found) return;
 
-    let pos=new google.maps.LatLng(box.lat,box.lng);
+    let d=getDistance(
 
-    let d=google.maps.geometry.spherical
-      .computeDistanceBetween(me,pos);
+      me[0],
+      me[1],
+
+      box.lat,
+      box.lng
+    );
+
+    // TAMPIL 12 METER
 
     if(d<=12){
 
-      let m=new google.maps.Marker({
-        position:pos,
-        map:map,
-        icon:{
-          url:"https://cdn-icons-png.flaticon.com/512/3097/3097133.png",
-          scaledSize:new google.maps.Size(45,45)
-        }
-      });
+      let marker=L.marker(
 
-      visibleMarkers.push(m);
+        [box.lat,box.lng],
+
+        {
+          icon:L.icon({
+
+            iconUrl:
+            'https://cdn-icons-png.flaticon.com/512/3097/3097133.png',
+
+            iconSize:[45,45]
+          })
+        }
+
+      ).addTo(map);
+
+      visibleMarkers.push(marker);
     }
+
+    // BUKA 5 METER
 
     if(d<=5 && !box.opened){
 
@@ -577,76 +770,31 @@ function updateBoxes(me){
 
       setTimeout(()=>{
 
-        let ans=prompt(box.question);
+        let ans=
+          prompt(box.question);
 
-        if(ans && ans.toLowerCase()===box.answer){
+        if(
+          ans &&
+          ans.toLowerCase()===box.answer
+        ){
 
           box.found=true;
 
           alert("🎉 Benar!");
 
-        } else {
+        }else{
 
           alert("❌ Salah!");
 
           if(unusedBoxes.length>0){
 
-            activeBoxes[i]=unusedBoxes.shift();
+            activeBoxes[i]=
+              unusedBoxes.shift();
 
-          } else {
+          }else{
 
             activeBoxes.splice(i,1);
-
           }
-        }
-
-        // =========================
-        // PETUNJUK KOTAK LAIN
-        // =========================
-
-        let remainingBoxes = activeBoxes.filter(b =>
-          !b.found && b !== box
-        );
-
-        if(remainingBoxes.length > 0){
-
-          let hintBox = remainingBoxes[
-            Math.floor(Math.random() * remainingBoxes.length)
-          ];
-
-          let hintPos = new google.maps.LatLng(
-            hintBox.lat,
-            hintBox.lng
-          );
-
-          let distanceHint =
-            google.maps.geometry.spherical
-              .computeDistanceBetween(me, hintPos);
-
-          let direction = "";
-
-          let latDiff = hintBox.lat - me.lat();
-          let lngDiff = hintBox.lng - me.lng();
-
-          if(latDiff > 0.00001){
-            direction += "Utara ";
-          } else {
-            direction += "Selatan ";
-          }
-
-          if(lngDiff > 0.00001){
-            direction += "Timur";
-          } else {
-            direction += "Barat";
-          }
-
-          alert(
-            "🧭 Petunjuk kotak lain:\n\n" +
-            "Arah: " + direction + "\n" +
-            "Jarak sekitar: " +
-            Math.round(distanceHint) +
-            " meter"
-          );
         }
 
         updateUI();
@@ -659,10 +807,16 @@ function updateBoxes(me){
   });
 }
 
-// CEK MENANG
+// =========================
+// WIN
+// =========================
+
 function checkWin(){
 
-  let found=activeBoxes.filter(b=>b.found).length;
+  let found=
+    activeBoxes.filter(
+      b=>b.found
+    ).length;
 
   if(found>=10){
 
@@ -672,21 +826,36 @@ function checkWin(){
 
     playerName.disabled=false;
 
-    alert("🏆 Selamat! Semua kotak berhasil ditemukan!");
+    alert(
+      "🏆 Semua kotak ditemukan!"
+    );
   }
 }
 
+// =========================
 // UI
+// =========================
+
 function updateUI(){
 
-  let found=activeBoxes.filter(b=>b.found).length;
+  let found=
+    activeBoxes.filter(
+      b=>b.found
+    ).length;
 
-  progress.textContent="Progress: "+found+"/10";
+  progress.textContent=
+    "Progress: "+found+"/10";
 
-  playerList.innerHTML=activeBoxes.map((b,i)=>
+  playerList.innerHTML=
 
-    `<div class="${b.found?'found':''}">
+    activeBoxes.map((b,i)=>
+
+    `<div class="${
+      b.found?'found':''
+    }">
+
       📦 Soal ${i+1}
+
     </div>`
 
   ).join("");
