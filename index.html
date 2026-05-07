@@ -6,31 +6,103 @@
 <title>Cari Kotak GPS PRO FINAL</title>
 
 <style>
-body { margin:0; font-family:'Segoe UI'; }
-#map { height:100vh; }
-
-.panel {
-  position:fixed; top:10px; right:10px;
-  width:300px; background:white;
-  padding:14px; border-radius:12px;
-  box-shadow:0 6px 25px rgba(0,0,0,0.3);
-  z-index:1000;
+body {
+  margin:0;
+  font-family:'Segoe UI';
 }
 
-button {
-  width:100%; padding:12px;
-  margin:6px 0; border:none;
+#map {
+  height:100vh;
+}
+
+.panel{
+  position:fixed;
+  top:10px;
+  right:10px;
+  width:320px;
+  background:white;
+  padding:14px;
+  border-radius:12px;
+  box-shadow:0 6px 25px rgba(0,0,0,0.3);
+  z-index:1000;
+  max-height:95vh;
+  overflow:auto;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  margin:6px 0;
+  border:none;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+input[type="number"],
+input[type="text"]{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  box-sizing:border-box;
+  margin-bottom:8px;
+}
+
+.btn-admin{
+  background:#f0ad4e;
+  color:white;
+}
+
+.btn-import{
+  background:#5bc0de;
+  color:white;
+}
+
+.btn-start{
+  background:#4CAF50;
+  color:white;
+}
+
+.btn-export{
+  background:#ff9800;
+  color:white;
+}
+
+.hidden{
+  display:none;
+}
+
+.found{
+  text-decoration:line-through;
+  color:green;
+}
+
+#timerDisplay{
+  margin-top:10px;
+  font-size:22px;
+  font-weight:bold;
+  text-align:center;
+  color:#e91e63;
+  padding:10px;
+  background:#f5f5f5;
+  border-radius:10px;
+}
+
+.settingBox{
+  margin-top:10px;
+  padding:10px;
+  background:#f7f7f7;
+  border-radius:10px;
+}
+
+#playerInfo{
+  margin-top:8px;
+  padding:10px;
+  background:#f5f5f5;
   border-radius:10px;
   font-weight:bold;
 }
-
-.btn-admin { background:#f0ad4e; color:white; }
-.btn-import { background:#5bc0de; color:white; }
-.btn-start { background:#4CAF50; color:white; }
-.btn-export { background:#ff9800; color:white; }
-
-.hidden { display:none; }
-.found { text-decoration:line-through; color:green; }
 </style>
 </head>
 
@@ -45,9 +117,16 @@ button {
 <button id="importBtn" class="btn-import">📥 Import Game</button>
 <input type="file" id="fileInput" class="hidden">
 
+<input type="text" id="playerName" placeholder="Masukkan nama pemain">
+
 <button id="startBtn" class="btn-start">▶️ Mulai Game</button>
 
+<div id="timerDisplay">⏳ 00:00</div>
+
+<div id="playerInfo">👤 Pemain: -</div>
+
 <div id="progress">Progress: 0/10</div>
+
 <div id="playerList"></div>
 
 <hr>
@@ -56,10 +135,20 @@ button {
 
 <!-- ADMIN PANEL -->
 <div id="adminPanel" class="hidden">
+
   <h4>🔧 Admin Mode</h4>
+
+  <div class="settingBox">
+    <label>⏰ Waktu Permainan (menit)</label>
+    <input type="number" id="timerInput" value="30" min="1">
+  </div>
+
   <button id="drawBtn">✏️ Gambar Area</button>
+
   <button id="stopBtn">⏹️ Stop</button>
+
   <button id="exportBtn" class="btn-export">📤 Export Game</button>
+
 </div>
 
 </div>
@@ -67,6 +156,7 @@ button {
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSSvbZkADfSSplx6nVWj6s5h1fogrcaA4&libraries=geometry"></script>
 
 <script>
+
 const ADMIN_PASSWORD = "1234";
 
 let map, polygon=null, drawing=false, path=[];
@@ -80,8 +170,16 @@ let playerMarker;
 let visibleMarkers=[];
 let watchId;
 
+let gameTimer;
+let timeLeft=0;
+let gameDuration=30;
+
+let currentPlayerName="";
+let gameStarted=false;
+
 // INIT
 function init(){
+
   map=new google.maps.Map(document.getElementById("map"),{
     center:{lat:-8.17,lng:113.7},
     zoom:18,
@@ -91,16 +189,21 @@ function init(){
   map.addListener("click",mapClick);
 
   setMode('player');
+
+  updateTimerDisplay();
 }
+
 window.onload=init;
 
 // MODE
 function setMode(m){
+
   mode=m;
 
   adminPanel.classList.toggle("hidden",m!=='admin');
 
   if(m==='player'){
+
     map.setOptions({
       gestureHandling:"none",
       zoomControl:false,
@@ -108,36 +211,53 @@ function setMode(m){
       scrollwheel:false,
       disableDoubleClickZoom:true
     });
+
   } else {
+
     map.setOptions({
       gestureHandling:"auto",
       zoomControl:true,
       draggable:true,
       scrollwheel:true
     });
+
   }
 }
 
 // ADMIN LOGIN
 adminBtn.onclick=()=>{
+
   let pw=prompt("Password admin:");
+
   if(pw===ADMIN_PASSWORD){
+
     setMode('admin');
-  } else alert("Password salah!");
+
+  } else {
+
+    alert("Password salah!");
+
+  }
 };
 
 // DRAW AREA
 drawBtn.onclick=()=>{
+
   drawing=true;
+
   path=[];
+
   if(polygon) polygon.setMap(null);
+
   alert("Klik minimal 3 titik");
 };
 
 stopBtn.onclick=()=>{
+
   drawing=false;
 
-  if(path.length<3) return alert("Minimal 3 titik");
+  if(path.length<3)
+    return alert("Minimal 3 titik");
 
   polygon=new google.maps.Polygon({
     paths:path,
@@ -157,20 +277,31 @@ function mapClick(e){
   if(mode!=='admin') return;
 
   if(drawing){
+
     path.push(e.latLng);
-    new google.maps.Marker({position:e.latLng,map:map});
+
+    new google.maps.Marker({
+      position:e.latLng,
+      map:map
+    });
+
     return;
   }
 
-  if(!polygon) return alert("Buat area dulu");
+  if(!polygon)
+    return alert("Buat area dulu");
 
   let inside=google.maps.geometry.poly.containsLocation(e.latLng,polygon);
-  if(!inside) return alert("Klik di dalam area");
+
+  if(!inside)
+    return alert("Klik di dalam area");
 
   let q=prompt("Pertanyaan:");
+
   if(!q) return;
 
   let a=prompt("Jawaban:");
+
   if(!a) return;
 
   allBoxes.push({
@@ -182,26 +313,46 @@ function mapClick(e){
     opened:false
   });
 
-  new google.maps.Marker({position:e.latLng,map:map});
+  new google.maps.Marker({
+    position:e.latLng,
+    map:map
+  });
 }
 
 // EXPORT
 exportBtn.onclick=()=>{
 
   if(allBoxes.length===0){
+
     alert("Belum ada soal!");
     return;
   }
 
+  gameDuration=parseInt(timerInput.value) || 30;
+
   const data={
-    polygonPath: path.map(p=>({lat:p.lat(),lng:p.lng()})),
-    boxes: allBoxes
+
+    gameDuration:gameDuration,
+
+    polygonPath:path.map(p=>({
+      lat:p.lat(),
+      lng:p.lng()
+    })),
+
+    boxes:allBoxes
   };
 
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const blob=new Blob(
+    [JSON.stringify(data,null,2)],
+    {type:'application/json'}
+  );
+
   const a=document.createElement('a');
+
   a.href=URL.createObjectURL(blob);
+
   a.download="game-gps.json";
+
   a.click();
 };
 
@@ -209,18 +360,29 @@ exportBtn.onclick=()=>{
 importBtn.onclick=()=>fileInput.click();
 
 fileInput.onchange=e=>{
+
   let file=e.target.files[0];
+
   let reader=new FileReader();
 
   reader.onload=()=>{
+
     const data=JSON.parse(reader.result);
 
     allBoxes=data.boxes||[];
 
-    if(data.polygonPath && data.polygonPath.length>=3){
-      const poly=data.polygonPath.map(p=>new google.maps.LatLng(p.lat,p.lng));
+    gameDuration=data.gameDuration || 30;
 
-      if(polygon) polygon.setMap(null);
+    timerInput.value=gameDuration;
+
+    if(data.polygonPath && data.polygonPath.length>=3){
+
+      const poly=data.polygonPath.map(
+        p=>new google.maps.LatLng(p.lat,p.lng)
+      );
+
+      if(polygon)
+        polygon.setMap(null);
 
       polygon=new google.maps.Polygon({
         paths:poly,
@@ -240,11 +402,34 @@ fileInput.onchange=e=>{
 
 // START GAME
 startBtn.onclick=()=>{
-  if(allBoxes.length<10) return alert("Minimal 10 soal");
+
+  const inputName=playerName.value.trim();
+
+  if(inputName===""){
+    return alert("Masukkan nama pemain!");
+  }
+
+  // hanya bisa diisi sekali selama game
+  if(!gameStarted){
+
+    currentPlayerName=inputName;
+
+    playerName.value=currentPlayerName;
+
+    playerInfo.textContent="👤 Pemain: "+currentPlayerName;
+
+    playerName.disabled=true;
+
+    gameStarted=true;
+  }
+
+  if(allBoxes.length<10)
+    return alert("Minimal 10 soal");
 
   let shuffled=[...allBoxes].sort(()=>Math.random()-0.5);
 
   activeBoxes=shuffled.slice(0,10);
+
   unusedBoxes=shuffled.slice(10);
 
   activeBoxes.forEach(b=>{
@@ -252,22 +437,85 @@ startBtn.onclick=()=>{
     b.opened=false;
   });
 
+  updateUI();
+
+  startGameTimer();
+
   startPlayer();
 };
+
+// TIMER
+function startGameTimer(){
+
+  clearInterval(gameTimer);
+
+  gameDuration=parseInt(timerInput.value) || 30;
+
+  timeLeft=gameDuration*60;
+
+  updateTimerDisplay();
+
+  gameTimer=setInterval(()=>{
+
+    timeLeft--;
+
+    updateTimerDisplay();
+
+    if(timeLeft<=0){
+
+      clearInterval(gameTimer);
+
+      endGame();
+    }
+
+  },1000);
+}
+
+function updateTimerDisplay(){
+
+  let minutes=Math.floor(timeLeft/60);
+
+  let seconds=timeLeft%60;
+
+  let m=String(minutes).padStart(2,'0');
+
+  let s=String(seconds).padStart(2,'0');
+
+  timerDisplay.textContent=`⏳ ${m}:${s}`;
+}
+
+// GAME OVER
+function endGame(){
+
+  if(watchId)
+    navigator.geolocation.clearWatch(watchId);
+
+  gameStarted=false;
+
+  playerName.disabled=false;
+
+  alert("⏰ Waktu habis!");
+}
 
 // PLAYER
 function startPlayer(){
 
-  if(watchId) navigator.geolocation.clearWatch(watchId);
+  if(watchId)
+    navigator.geolocation.clearWatch(watchId);
 
   watchId=navigator.geolocation.watchPosition(pos=>{
 
-    let me=new google.maps.LatLng(pos.coords.latitude,pos.coords.longitude);
+    let me=new google.maps.LatLng(
+      pos.coords.latitude,
+      pos.coords.longitude
+    );
 
     map.setCenter(me);
+
     map.setZoom(20);
 
     if(!playerMarker){
+
       playerMarker=new google.maps.Marker({
         position:me,
         map:map,
@@ -280,17 +528,25 @@ function startPlayer(){
           strokeWeight:2
         }
       });
-    } else playerMarker.setPosition(me);
+
+    } else {
+
+      playerMarker.setPosition(me);
+
+    }
 
     updateBoxes(me);
 
-  },()=>alert("GPS error"),{enableHighAccuracy:true});
+  },()=>alert("GPS error"),{
+    enableHighAccuracy:true
+  });
 }
 
 // UPDATE BOX
 function updateBoxes(me){
 
   visibleMarkers.forEach(m=>m.setMap(null));
+
   visibleMarkers=[];
 
   activeBoxes.forEach((box,i)=>{
@@ -298,37 +554,56 @@ function updateBoxes(me){
     if(box.found) return;
 
     let pos=new google.maps.LatLng(box.lat,box.lng);
-    let d=google.maps.geometry.spherical.computeDistanceBetween(me,pos);
+
+    let d=google.maps.geometry.spherical
+      .computeDistanceBetween(me,pos);
 
     if(d<=5){
+
       let m=new google.maps.Marker({
         position:pos,
         map:map,
-        icon:"http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
+        icon:{
+  url:"https://cdn-icons-png.flaticon.com/512/3097/3097133.png",
+  scaledSize:new google.maps.Size(45,45)
+}
       });
+
       visibleMarkers.push(m);
     }
 
     if(d<=2 && !box.opened){
+
       box.opened=true;
 
       setTimeout(()=>{
+
         let ans=prompt(box.question);
 
         if(ans && ans.toLowerCase()===box.answer){
+
           box.found=true;
+
           alert("🎉 Benar!");
+
         } else {
+
           alert("❌ Salah!");
 
           if(unusedBoxes.length>0){
+
             activeBoxes[i]=unusedBoxes.shift();
+
           } else {
+
             activeBoxes.splice(i,1);
+
           }
         }
 
         updateUI();
+
+        checkWin();
 
       },200);
     }
@@ -336,15 +611,39 @@ function updateBoxes(me){
   });
 }
 
+// CEK MENANG
+function checkWin(){
+
+  let found=activeBoxes.filter(b=>b.found).length;
+
+  if(found>=10){
+
+    clearInterval(gameTimer);
+
+    gameStarted=false;
+
+    playerName.disabled=false;
+
+    alert("🏆 Selamat! Semua kotak berhasil ditemukan!");
+  }
+}
+
 // UI
 function updateUI(){
+
   let found=activeBoxes.filter(b=>b.found).length;
+
   progress.textContent="Progress: "+found+"/10";
 
   playerList.innerHTML=activeBoxes.map((b,i)=>
-    `<div class="${b.found?'found':''}">📦 Soal ${i+1}</div>`
+
+    `<div class="${b.found?'found':''}">
+      📦 Soal ${i+1}
+    </div>`
+
   ).join("");
 }
+
 </script>
 
 </body>
