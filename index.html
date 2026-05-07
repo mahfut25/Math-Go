@@ -19,9 +19,7 @@ body{
   height:100vh;
 }
 
-/* =========================
-PANEL
-========================= */
+/* PANEL */
 
 .panel{
   position:fixed;
@@ -38,9 +36,7 @@ PANEL
   transition:0.3s;
 }
 
-/* =========================
-MINIMIZE PANEL
-========================= */
+/* MINIMIZE PANEL */
 
 .panel.minimized{
   width:60px;
@@ -164,6 +160,15 @@ input[type="text"]{
 <h3>🎮 Mode Player</h3>
 
 <input type="text"
+id="gameCode"
+placeholder="Masukkan kode game">
+
+<button id="loadGameBtn"
+class="btn-import">
+🎮 Load Game
+</button>
+
+<input type="text"
 id="playerName"
 placeholder="Masukkan nama pemain">
 
@@ -283,44 +288,60 @@ function init(){
 window.onload=()=>{
 
   init();
-
-  autoLoadGame();
 };
 
 // =========================
-// AUTO LOAD GAME.JSON
+// LOAD GAME DARI KODE
 // =========================
 
-async function autoLoadGame(){
+loadGameBtn.onclick=()=>{
+
+  loadGameFromCode();
+};
+
+async function loadGameFromCode(){
+
+  let code=
+    gameCode.value.trim();
+
+  if(code===""){
+
+    return alert(
+      "Masukkan kode game!"
+    );
+  }
+
+  code=code.toUpperCase();
 
   try{
 
-    const response =
-      await fetch("game.json");
+    const response=
+      await fetch(code + ".json");
 
     if(!response.ok){
 
-      console.log("game.json tidak ditemukan");
+      alert("Game tidak ditemukan!");
 
       return;
     }
 
-    const data =
+    const data=
       await response.json();
 
-    allBoxes = data.boxes || [];
+    allBoxes=
+      data.boxes || [];
 
-    gameDuration =
+    gameDuration=
       data.gameDuration || 30;
 
-    timerInput.value =
+    timerInput.value=
       gameDuration;
 
     if(data.polygonPath){
 
-      path = data.polygonPath;
+      path=data.polygonPath;
 
-      polygon = path;
+      polygon=path;
 
       if(polygonLayer){
 
@@ -329,7 +350,7 @@ async function autoLoadGame(){
         );
       }
 
-      polygonLayer =
+      polygonLayer=
         L.polygon(path,{
 
           color:'red',
@@ -346,6 +367,8 @@ async function autoLoadGame(){
   }catch(err){
 
     console.log(err);
+
+    alert("Gagal load game");
   }
 }
 
@@ -551,7 +574,18 @@ exportBtn.onclick=()=>{
 
   a.href=URL.createObjectURL(blob);
 
-  a.download="game.json";
+  let code=prompt(
+    "Masukkan kode game:"
+  );
+
+  if(!code){
+
+    return;
+  }
+
+  code=code.toUpperCase();
+
+  a.download=code + ".json";
 
   a.click();
 };
@@ -800,8 +834,6 @@ function updateBoxes(me){
       box.lng
     );
 
-    // TAMPIL 12 METER
-
     if(d<=12){
 
       let marker=L.marker(
@@ -822,8 +854,6 @@ function updateBoxes(me){
 
       visibleMarkers.push(marker);
     }
-
-    // BUKA 5 METER
 
     if(d<=5 && !box.opened){
 
