@@ -1,0 +1,295 @@
+{
+  "gameDuration": 60,
+  "polygonPath": [
+    [
+      -8.196281908702018,
+      113.63636612892152
+    ],
+    [
+      -8.195544026237503,
+      113.63828122615816
+    ],
+    [
+      -8.198193208110478,
+      113.63808810710907
+    ],
+    [
+      -8.198140123341858,
+      113.63784670829774
+    ],
+    [
+      -8.1996211857268,
+      113.63769650459291
+    ],
+    [
+      -8.19915934966099,
+      113.63608181476594
+    ]
+  ],
+  "boxes": [
+    {
+      "lat": -8.195889322634082,
+      "lng": 113.63765358924867,
+      "question": "berapakah 5*7?",
+      "answer": "35",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.196255609466018,
+      "lng": 113.63721370697021,
+      "question": "berapakah 5+7?",
+      "answer": "12",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.196494492000783,
+      "lng": 113.63645732402803,
+      "question": "berapakah 8*8?",
+      "answer": "64",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.196897937733745,
+      "lng": 113.63642513751985,
+      "question": "berapakah 81/9?",
+      "answer": "9",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.19690855472119,
+      "lng": 113.63676846027376,
+      "question": "berapakah 25-7?",
+      "answer": "18",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.196287460478976,
+      "lng": 113.63764822483064,
+      "question": "berapakah 9*7?",
+      "answer": "72",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.196372396500928,
+      "lng": 113.63676846027376,
+      "question": "berapakah 11*11?",
+      "answer": "121",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.19642017300536,
+      "lng": 113.63778769969942,
+      "question": "berapakah 9*9?",
+      "answer": "81",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.197099660446789,
+      "lng": 113.63677382469179,
+      "question": "berapakah 99/9?",
+      "answer": "11",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.197375701888294,
+      "lng": 113.63644123077394,
+      "question": "berapakah 9*12?",
+      "answer": "108",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.196882012252054,
+      "lng": 113.6372083425522,
+      "question": "berapakah 144/16?",
+      "answer": "9",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.196998799103053,
+      "lng": 113.63737463951112,
+      "question": "berapakah 125/25?",
+      "answer": "5",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.19691386321481,
+      "lng": 113.63763749599458,
+      "question": "berapakah 9*3?",
+      "answer": "27",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.196351162497145,
+      "lng": 113.63738536834718,
+      "question": "berapakah 2*7?",
+      "answer": "14",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.197455329191607,
+      "lng": 113.63660752773286,
+      "question": "berapakah 5*7?",
+      "answer": "35",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.196499800499925,
+      "lng": 113.63672554492952,
+      "question": "berapakah 36-7?",
+      "answer": "29",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.197354467938071,
+      "lng": 113.63737463951112,
+      "question": "berapakah 98-35?",
+      "answer": "63",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.19716867082511,
+      "lng": 113.63763213157655,
+      "question": "berapakah 76+98?",
+      "answer": "174",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.197439403732233,
+      "lng": 113.63762676715852,
+      "question": "berapakah 6/2?",
+      "answer": "3",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.19747125465036,
+      "lng": 113.63739609718324,
+      "question": "berapakah 35*7?",
+      "answer": "5",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.197439403732233,
+      "lng": 113.63697767257692,
+      "question": "berapakah 15*7?",
+      "answer": "105",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.197582945848751,
+      "lng": 113.63640904426576,
+      "question": "berapakah 5*17?",
+      "answer": "85",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.19767849856102,
+      "lng": 113.63764286041261,
+      "question": "berapakah 5*5?",
+      "answer": "25",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.197858986954847,
+      "lng": 113.63762140274049,
+      "question": "berapakah 8*7?",
+      "answer": "56",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.197927997201454,
+      "lng": 113.63726735115053,
+      "question": "berapakah 12*7?",
+      "answer": "108",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.197885529358794,
+      "lng": 113.63689720630647,
+      "question": "berapakah 95/5?",
+      "answer": "19",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.197885529358794,
+      "lng": 113.63651096820833,
+      "question": "berapakah 160/20?",
+      "answer": "8",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.198119102437184,
+      "lng": 113.63629639148714,
+      "question": "berapakah 104/8",
+      "answer": "13",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.198182804162043,
+      "lng": 113.63711178302766,
+      "question": "berapakah 84/7?",
+      "answer": "12",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.198347366903981,
+      "lng": 113.63631248474123,
+      "question": "berapakah 28/7?",
+      "answer": "4",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.198549088881833,
+      "lng": 113.63711178302766,
+      "question": "berapakah 100/5?",
+      "answer": "20",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.198825129317354,
+      "lng": 113.63711178302766,
+      "question": "berapakah 109-28?",
+      "answer": "81",
+      "found": false,
+      "opened": false
+    },
+    {
+      "lat": -8.198703034532985,
+      "lng": 113.63629639148714,
+      "question": "berapakah 78-26?",
+      "answer": "52",
+      "found": false,
+      "opened": false
+    }
+  ]
+}
