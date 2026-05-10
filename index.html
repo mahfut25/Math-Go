@@ -172,6 +172,10 @@ class="btn-import">
 id="playerName"
 placeholder="Masukkan nama pemain">
 
+<input type="text"
+id="playerClass"
+placeholder="Masukkan kelas">
+
 <button id="startBtn" class="btn-start">
 ▶️ Mulai Game
 </button>
@@ -181,7 +185,8 @@ placeholder="Masukkan nama pemain">
 </div>
 
 <div id="playerInfo">
-👤 Pemain: -
+👤 Pemain: -<br>
+🏫 Kelas: -
 </div>
 
 <div id="progress">
@@ -256,6 +261,7 @@ let timeLeft=0;
 let gameDuration=30;
 
 let currentPlayerName="";
+let currentPlayerClass="";
 let gameStarted=false;
 
 let mode='player';
@@ -599,21 +605,33 @@ startBtn.onclick=()=>{
   const inputName=
     playerName.value.trim();
 
+  const inputClass=
+    playerClass.value.trim();
+
   if(inputName===""){
 
     return alert("Masukkan nama pemain!");
   }
 
+  if(inputClass===""){
+
+    return alert("Masukkan kelas!");
+  }
+
   if(!gameStarted){
 
     currentPlayerName=inputName;
+    currentPlayerClass=inputClass;
 
     playerName.value=currentPlayerName;
+    playerClass.value=currentPlayerClass;
 
-    playerInfo.textContent=
-      "👤 Pemain: "+currentPlayerName;
+    playerInfo.innerHTML=
+      "👤 Pemain: "+currentPlayerName+
+      "<br>🏫 Kelas: "+currentPlayerClass;
 
     playerName.disabled=true;
+    playerClass.disabled=true;
 
     gameStarted=true;
   }
@@ -707,6 +725,7 @@ function endGame(){
   gameStarted=false;
 
   playerName.disabled=false;
+  playerClass.disabled=false;
 
   alert("⏰ Waktu habis!");
 }
@@ -916,6 +935,7 @@ function checkWin(){
     gameStarted=false;
 
     playerName.disabled=false;
+    playerClass.disabled=false;
 
     alert(
       "🏆 Semua kotak ditemukan!"
