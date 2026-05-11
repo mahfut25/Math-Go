@@ -239,7 +239,21 @@ min="1">
 
 <script>
 
+// =========================
+// CONFIG
+// =========================
+
 const ADMIN_PASSWORD = "1234";
+
+/*
+GANTI DENGAN URL WEB APP
+GOOGLE APPS SCRIPT
+*/
+
+const SHEET_URL =
+"https://script.google.com/macros/s/AKfycbypg12ibWOv2ENrefM9LGj5r8H4PJMXZjp39CSaLqzTy6dRrnenRADv3oMWmsbvhr1j/exec";
+
+// =========================
 
 let map;
 let polygon=null;
@@ -727,6 +741,8 @@ function endGame(){
   playerName.disabled=false;
   playerClass.disabled=false;
 
+  sendResult("Waktu Habis");
+
   alert("⏰ Waktu habis!");
 }
 
@@ -937,6 +953,8 @@ function checkWin(){
     playerName.disabled=false;
     playerClass.disabled=false;
 
+    sendResult("Menang");
+
     alert(
       "🏆 Semua kotak ditemukan!"
     );
@@ -970,6 +988,58 @@ function updateUI(){
     </div>`
 
   ).join("");
+}
+
+// =========================
+// SEND RESULT TO SHEET
+// =========================
+
+async function sendResult(status){
+
+  let found =
+    activeBoxes.filter(
+      b=>b.found
+    ).length;
+
+  let minutes =
+    Math.floor(timeLeft/60);
+
+  let seconds =
+    timeLeft%60;
+
+  let waktu =
+    String(minutes).padStart(2,'0')
+    + ":" +
+    String(seconds).padStart(2,'0');
+
+  const data={
+
+    nama:currentPlayerName,
+
+    kelas:currentPlayerClass,
+
+    progress:found+"/10",
+
+    waktu:waktu,
+
+    status:status
+  };
+
+  try{
+
+    await fetch(SHEET_URL,{
+
+      method:"POST",
+
+      body:JSON.stringify(data)
+    });
+
+    console.log("Data terkirim");
+
+  }catch(err){
+
+    console.log(err);
+  }
 }
 
 // =========================
