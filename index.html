@@ -316,6 +316,13 @@
       border-radius: 12px;
       font-size: 12px;
     }
+
+    /* item icon styling */
+    .item-icon {
+      background: none;
+      border: none;
+      filter: drop-shadow(0 0 6px white);
+    }
   </style>
 </head>
 <body>
@@ -420,8 +427,10 @@
         enemyInterval = null;
       let safeZoneCircle = null,
         safeZoneInterval = null;
-      let currentItem = null,
-        itemSpawnInterval = null;
+      // Item system: multiple items (max 5)
+      let items = []; // array of {type, lat, lng, marker}
+      const MAX_ITEMS = 5;
+      let itemSpawnInterval = null;
       let quizActive = false,
         currentQuizBox = null,
         currentQuizIndex = -1;
@@ -449,10 +458,11 @@
         mode = m;
         document.getElementById('adminPanel').classList.toggle('hidden', m !== 'admin');
         if (m === 'player') {
+          // Izinkan zoom, tapi tetap kunci dragging agar posisi mengikuti pemain
           map.dragging.disable();
-          map.touchZoom.disable();
-          map.doubleClickZoom.disable();
-          map.scrollWheelZoom.disable();
+          map.touchZoom.enable();
+          map.doubleClickZoom.enable();
+          map.scrollWheelZoom.enable();
         } else {
           map.dragging.enable();
           map.touchZoom.enable();
@@ -646,8 +656,9 @@
         enemy = null;
         if (safeZoneCircle) map.removeLayer(safeZoneCircle);
         safeZoneCircle = null;
-        if (currentItem && currentItem.marker) map.removeLayer(currentItem.marker);
-        currentItem = null;
+        // Hapus semua item
+        items.forEach(item => map.removeLayer(item.marker));
+        items = [];
         visibleMarkers.forEach(m => map.removeLayer(m));
         visibleMarkers = [];
         lives = maxLives;
@@ -922,34 +933,45 @@
         safeZoneInterval = setInterval(moveSafeZone, 60000);
       }
 
-      // ========================= ITEM SYSTEM =========================
+      // ========================= ITEM SYSTEM (MAX 5) =========================
       function startItemSpawner() {
         clearInterval(itemSpawnInterval);
-        itemSpawnInterval = setInterval(() => {
-          if (!currentItem && gameStarted) spawnRandomItem();
-        }, 30000);
-        setTimeout(() => { if (!currentItem && gameStarted) spawnRandomItem(); }, 5000);
+        // Fungsi untuk menjaga jumlah item tetap maksimal
+        const maintainItems = () => {
+          if (!gameStarted || !playerMarker || !polygon) return;
+          while (items.length < MAX_ITEMS) {
+            spawnRandomItem();
+          }
+        };
+        maintainItems(); // langsung isi hingga 5
+        itemSpawnInterval = setInterval(maintainItems, 5000); // cek tiap 5 detik
       }
 
       function spawnRandomItem() {
         if (!playerMarker || !polygon) return;
         const playerPos = playerMarker.getLatLng();
-        const types = ['potion', 'potion', 'shield', 'compass'];
+        const types = ['potion', 'potion', 'shield', 'compass']; // weighted
         const type = types[Math.floor(Math.random() * types.length)];
-        const offset = randomOffset(30);
-        const itemLat = playerPos.lat + offset.dLat;
-        const itemLng = playerPos.lng + offset.dLng;
-        if (!insidePolygon({ lat: itemLat, lng: itemLng }, polygon)) return;
-        const iconHtml = {
-          potion: '<i class="fa-solid fa-flask" style="color:#a78bfa;font-size:24px;"></i>',
-          shield: '<i class="fa-solid fa-shield-haltered" style="color:#facc15;font-size:24px;"></i>',
-          compass: '<i class="fa-solid fa-compass" style="color:#fb923c;font-size:24px;"></i>'
-        };
-        const marker = L.marker([itemLat, itemLng], {
-          icon: L.divIcon({ className: 'item-icon', html: iconHtml[type], iconSize: [30, 30], iconAnchor: [15,
-              15] })
-        }).addTo(map);
-        currentItem = { type, lat: itemLat, lng: itemLng, marker };
+        // Coba hingga 10 kali mencari posisi di dalam polygon
+        for (let attempt = 0; attempt < 10; attempt++) {
+          const offset = randomOffset(30);
+          const itemLat = playerPos.lat + offset.dLat;
+          const itemLng = playerPos.lng + offset.dLng;
+          if (insidePolygon({ lat: itemLat, lng: itemLng }, polygon)) {
+            const iconHtml = {
+              potion: '<i class="fa-solid fa-flask" style="color:#a78bfa;font-size:24px;"></i>',
+              shield: '<i class="fa-solid fa-shield-haltered" style="color:#facc15;font-size:24px;"></i>',
+              compass: '<i class="fa-solid fa-compass" style="color:#fb923c;font-size:24px;"></i>'
+            };
+            const marker = L.marker([itemLat, itemLng], {
+              icon: L.divIcon({ className: 'item-icon', html: iconHtml[type], iconSize: [30, 30], iconAnchor: [15,
+                  15] })
+            }).addTo(map);
+            items.push({ type, lat: itemLat, lng: itemLng, marker });
+            return; // berhasil
+          }
+        }
+        // jika gagal menemukan lokasi, tidak menambah item (nanti dicoba lagi)
       }
 
       function randomOffset(radiusMeters) {
@@ -962,13 +984,21 @@
       }
 
       function checkItemPickup(playerPos) {
-        if (!currentItem || !playerPos) return;
-        const d = getDistance(playerPos[0], playerPos[1], currentItem.lat, currentItem.lng);
-        if (d <= 6) {
-          applyItemEffect(currentItem.type);
-          map.removeLayer(currentItem.marker);
-          currentItem = null;
-          updateEffectsDisplay();
+        if (!playerPos || items.length === 0) return;
+        for (let i = items.length - 1; i >= 0; i--) {
+          const item = items[i];
+          const d = getDistance(playerPos[0], playerPos[1], item.lat, item.lng);
+          if (d <= 6) {
+            applyItemEffect(item.type);
+            map.removeLayer(item.marker);
+            items.splice(i, 1);
+            // Spawn satu item baru segera untuk menggantikan
+            if (gameStarted && items.length < MAX_ITEMS) {
+              spawnRandomItem();
+            }
+            updateEffectsDisplay();
+            break; // hanya satu item per deteksi (hindari spam)
+          }
         }
       }
 
