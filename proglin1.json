@@ -1,0 +1,152 @@
+[
+  {
+    "question": "Sebuah toko menjual roti dan susu. Harga roti Rp4.000 dan susu Rp5.000. Jika Ani membeli 2 roti dan 3 susu, berapa total harga belanja Ani?",
+    "options": ["Rp21.000", "Rp22.000", "Rp23.000", "Rp24.000"],
+    "correct": 2
+  },
+  {
+    "question": "Keuntungan sebuah usaha dirumuskan z = 3x + 2y. Jika x = 4 dan y = 5, berapa keuntungan yang diperoleh?",
+    "options": ["20", "21", "22", "23"],
+    "correct": 2
+  },
+  {
+    "question": "Sebuah pabrik memproduksi meja dan kursi. Setiap meja membutuhkan 4 jam kerja dan setiap kursi 2 jam kerja. Jika tersedia 16 jam kerja, pertidaksamaan yang benar adalah?",
+    "options": ["4x + 2y <= 16", "4x + 2y >= 16", "4x - 2y = 16", "x + y = 16"],
+    "correct": 0
+  },
+  {
+    "question": "Jika suatu usaha memiliki fungsi keuntungan z = 5x + 4y dan memproduksi 2 barang x serta 3 barang y, maka keuntungan total adalah?",
+    "options": ["20", "21", "22", "23"],
+    "correct": 2
+  },
+  {
+    "question": "Sebuah koperasi menyediakan maksimal 30 buku dan pensil. Jika x adalah buku dan y adalah pensil, model matematikanya adalah?",
+    "options": ["x + y <= 30", "x + y >= 30", "x - y = 30", "xy = 30"],
+    "correct": 0
+  },
+  {
+    "question": "Sebuah usaha memproduksi tas dan dompet. Setiap tas memberi keuntungan Rp10.000 dan dompet Rp5.000. Jika terjual 3 tas dan 4 dompet, berapa total keuntungan?",
+    "options": ["Rp45.000", "Rp50.000", "Rp55.000", "Rp60.000"],
+    "correct": 1
+  },
+  {
+    "question": "Jika fungsi objektif z = 2x + 3y dan titik yang diuji adalah (3,2), maka nilai z adalah?",
+    "options": ["11", "12", "13", "14"],
+    "correct": 1
+  },
+  {
+    "question": "Sebuah bengkel dapat memperbaiki paling banyak 20 kendaraan per hari. Jika x mobil dan y motor, maka model matematikanya adalah?",
+    "options": ["x + y <= 20", "x + y >= 20", "x - y = 20", "xy = 20"],
+    "correct": 0
+  },
+  {
+    "question": "Sebuah toko menjual apel dan jeruk. Harga apel Rp3.000 dan jeruk Rp2.000. Jika dibeli 5 apel dan 4 jeruk, total harga adalah?",
+    "options": ["Rp21.000", "Rp22.000", "Rp23.000", "Rp24.000"],
+    "correct": 2
+  },
+  {
+    "question": "Nilai fungsi objektif z = 4x + y pada titik (2,5) adalah?",
+    "options": ["12", "13", "14", "15"],
+    "correct": 1
+  },
+  {
+    "question": "Sebuah usaha memiliki modal maksimal Rp100.000. Jika biaya produk A Rp20.000 dan produk B Rp10.000, maka model matematikanya adalah?",
+    "options": ["20000x + 10000y <= 100000", "20000x + 10000y >= 100000", "20000x - 10000y = 100000", "x + y = 100000"],
+    "correct": 0
+  },
+  {
+    "question": "Jika keuntungan dirumuskan z = 6x + 2y dan x = 3 serta y = 4, maka nilai keuntungan adalah?",
+    "options": ["24", "25", "26", "27"],
+    "correct": 2
+  },
+  {
+    "question": "Sebuah kantin menjual nasi dan mie. Harga nasi Rp8.000 dan mie Rp7.000. Jika membeli 2 nasi dan 3 mie, total bayar adalah?",
+    "options": ["Rp35.000", "Rp36.000", "Rp37.000", "Rp38.000"],
+    "correct": 2
+  },
+  {
+    "question": "Model matematika dari 'jumlah siswa laki-laki dan perempuan paling banyak 40 orang' adalah?",
+    "options": ["x + y <= 40", "x + y >= 40", "x - y = 40", "xy = 40"],
+    "correct": 0
+  },
+  {
+    "question": "Jika z = 3x + 5y dan titik (2,4), maka nilai z adalah?",
+    "options": ["24", "25", "26", "27"],
+    "correct": 2
+  },
+  {
+    "question": "Sebuah usaha percetakan dapat mencetak maksimal 500 lembar per hari. Jika x poster dan y brosur, maka model matematikanya adalah?",
+    "options": ["x + y <= 500", "x + y >= 500", "x - y = 500", "xy = 500"],
+    "correct": 0
+  },
+  {
+    "question": "Keuntungan suatu usaha dirumuskan z = 7x + 3y. Jika x = 2 dan y = 5, maka keuntungan adalah?",
+    "options": ["28", "29", "30", "31"],
+    "correct": 1
+  },
+  {
+    "question": "Sebuah toko alat tulis menjual buku Rp5.000 dan pena Rp2.000. Jika membeli 4 buku dan 5 pena, total harga adalah?",
+    "options": ["Rp28.000", "Rp29.000", "Rp30.000", "Rp31.000"],
+    "correct": 2
+  },
+  {
+    "question": "Jika fungsi objektif z = 5x + 2y dan titik (4,3), maka nilai z adalah?",
+    "options": ["24", "25", "26", "27"],
+    "correct": 2
+  },
+  {
+    "question": "Model matematika dari 'jumlah kendaraan minimal 15 unit' adalah?",
+    "options": ["x + y <= 15", "x + y >= 15", "x - y = 15", "xy = 15"],
+    "correct": 1
+  },
+  {
+    "question": "Sebuah usaha roti menghasilkan keuntungan Rp4.000 tiap roti coklat dan Rp3.000 tiap roti keju. Jika terjual 5 roti coklat dan 4 roti keju, total keuntungan adalah?",
+    "options": ["Rp30.000", "Rp31.000", "Rp32.000", "Rp33.000"],
+    "correct": 2
+  },
+  {
+    "question": "Jika z = 2x + 6y dan titik (3,2), maka nilai z adalah?",
+    "options": ["17", "18", "19", "20"],
+    "correct": 1
+  },
+  {
+    "question": "Sebuah perusahaan memiliki waktu kerja maksimal 40 jam. Produk A memerlukan 5 jam dan produk B 3 jam. Model matematikanya adalah?",
+    "options": ["5x + 3y <= 40", "5x + 3y >= 40", "5x - 3y = 40", "x + y = 40"],
+    "correct": 0
+  },
+  {
+    "question": "Nilai fungsi objektif z = 8x + y pada titik (2,3) adalah?",
+    "options": ["18", "19", "20", "21"],
+    "correct": 1
+  },
+  {
+    "question": "Sebuah toko menjual teh Rp6.000 dan kopi Rp7.000. Jika membeli 3 teh dan 2 kopi, total harga adalah?",
+    "options": ["Rp31.000", "Rp32.000", "Rp33.000", "Rp34.000"],
+    "correct": 1
+  },
+  {
+    "question": "Jika keuntungan dirumuskan z = 9x + 2y dan x = 2 serta y = 4, maka nilai z adalah?",
+    "options": ["24", "25", "26", "27"],
+    "correct": 2
+  },
+  {
+    "question": "Model matematika dari 'jumlah produksi paling sedikit 100 unit' adalah?",
+    "options": ["x + y <= 100", "x + y >= 100", "x - y = 100", "xy = 100"],
+    "correct": 1
+  },
+  {
+    "question": "Nilai fungsi objektif z = 3x + 4y pada titik (5,2) adalah?",
+    "options": ["22", "23", "24", "25"],
+    "correct": 1
+  },
+  {
+    "question": "Sebuah toko buah menjual mangga Rp4.000 dan apel Rp5.000. Jika membeli 4 mangga dan 3 apel, total harga adalah?",
+    "options": ["Rp30.000", "Rp31.000", "Rp32.000", "Rp33.000"],
+    "correct": 1
+  },
+  {
+    "question": "Jika z = 7x + y dan titik (3,4), maka nilai z adalah?",
+    "options": ["24", "25", "26", "27"],
+    "correct": 1
+  }
+]
