@@ -28,7 +28,6 @@
       width: 100vw;
     }
 
-    /* ===== GLASS PANEL ===== */
     .panel {
       position: fixed;
       top: 16px;
@@ -91,8 +90,7 @@
       flex-direction: column;
       gap: 8px;
     }
-    h3,
-    h4 {
+    h3, h4 {
       display: flex;
       align-items: center;
       gap: 8px;
@@ -100,8 +98,7 @@
       letter-spacing: 0.4px;
       margin-bottom: 2px;
     }
-    input[type="number"],
-    input[type="text"] {
+    input[type="number"], input[type="text"] {
       width: 100%;
       padding: 11px 14px;
       border-radius: 16px;
@@ -146,25 +143,12 @@
       transform: translateY(-2px);
       box-shadow: 0 12px 22px rgba(0, 0, 0, 0.35);
     }
-    .btn-admin {
-      background: rgba(251, 191, 36, 0.65);
-    }
-    .btn-import {
-      background: rgba(56, 189, 248, 0.6);
-    }
-    .btn-start {
-      background: rgba(34, 197, 94, 0.7);
-    }
-    .btn-export {
-      background: rgba(251, 146, 60, 0.65);
-    }
-    .hidden {
-      display: none !important;
-    }
-    .found {
-      text-decoration: line-through;
-      color: #86efac;
-    }
+    .btn-admin { background: rgba(251, 191, 36, 0.65); }
+    .btn-import { background: rgba(56, 189, 248, 0.6); }
+    .btn-start { background: rgba(34, 197, 94, 0.7); }
+    .btn-export { background: rgba(251, 146, 60, 0.65); }
+    .hidden { display: none !important; }
+    .found { text-decoration: line-through; color: #86efac; }
     #timerDisplay {
       font-size: 28px;
       font-weight: 700;
@@ -229,13 +213,10 @@
       fill: rgba(34, 211, 238, 0.12);
     }
 
-    /* ===== QUIZ MODAL ===== */
     .quiz-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
       background: rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
@@ -245,10 +226,7 @@
       justify-content: center;
       animation: fadeIn 0.25s ease;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .quiz-card {
       background: rgba(15, 23, 42, 0.9);
       backdrop-filter: blur(24px);
@@ -261,12 +239,7 @@
       box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
       text-align: center;
     }
-    .quiz-card h3 {
-      font-size: 16px;
-      margin-bottom: 16px;
-      line-height: 1.4;
-      color: #f8fafc;
-    }
+    .quiz-card h3 { font-size: 16px; margin-bottom: 16px; line-height: 1.4; color: #f8fafc; }
     .quiz-option {
       display: block;
       width: 100%;
@@ -287,22 +260,10 @@
       border-color: #facc15;
       transform: scale(1.02);
     }
-    .quiz-option.correct-flash {
-      background: #22c55e !important;
-      border-color: #16a34a !important;
-      color: white !important;
-    }
-    .quiz-option.wrong-flash {
-      background: #ef4444 !important;
-      border-color: #dc2626 !important;
-      color: white !important;
-    }
-    .quiz-option:disabled {
-      pointer-events: none;
-      opacity: 0.7;
-    }
+    .quiz-option.correct-flash { background: #22c55e !important; border-color: #16a34a !important; }
+    .quiz-option.wrong-flash { background: #ef4444 !important; border-color: #dc2626 !important; }
+    .quiz-option:disabled { pointer-events: none; opacity: 0.7; }
 
-    /* ===== TOOLTIP ===== */
     .safe-tooltip {
       background: rgba(34, 211, 238, 0.9);
       border: none;
@@ -312,20 +273,44 @@
       border-radius: 12px;
       font-size: 12px;
     }
-
-    /* item icon styling */
     .item-icon {
       background: none;
       border: none;
       filter: drop-shadow(0 0 6px white);
     }
+
+    .import-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(0,0,0,0.3);
+      border-radius: 14px;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+    .import-info span {
+      background: #facc15;
+      color: #000;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+    .file-label {
+      background: rgba(56,189,248,0.6);
+      padding: 10px;
+      border-radius: 14px;
+      text-align: center;
+      cursor: pointer;
+      display: block;
+      font-weight: 600;
+    }
+    .file-label:hover { background: rgba(56,189,248,0.8); }
   </style>
 </head>
 <body>
 
   <div id="map"></div>
 
-  <!-- PANEL UTAMA -->
   <div class="panel" id="mainPanel">
     <button id="togglePanelBtn"><i class="fa-solid fa-xmark"></i></button>
     <div class="panelContent">
@@ -340,25 +325,17 @@
       <button id="startBtn" class="btn-start"><i class="fa-solid fa-play"></i> Mulai Game</button>
 
       <div id="timerDisplay">⏳ 00:00</div>
+      <div class="lives-container" id="livesDisplay"><i class="fa-solid fa-heart"></i> <span id="livesText">5/5</span></div>
 
-      <div class="lives-container" id="livesDisplay">
-        <i class="fa-solid fa-heart"></i> <span id="livesText">5/5</span>
-      </div>
-
-      <div id="playerInfo" class="status-badge">
-        <i class="fa-solid fa-user"></i> <span id="infoText">Pemain: - | Kelas: -</span>
-      </div>
+      <div id="playerInfo" class="status-badge"><i class="fa-solid fa-user"></i> <span id="infoText">Pemain: - | Kelas: -</span></div>
 
       <div>
         <span><i class="fa-solid fa-box"></i> Progress</span>
-        <div class="progress-bar">
-          <div class="progress-fill" id="progressFill" style="width:0%"></div>
-        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
         <small id="progressText">0/10</small>
       </div>
 
       <div id="activeEffects" style="display:flex; gap:8px; flex-wrap:wrap; min-height:26px;"></div>
-
       <div id="playerList" style="font-size:12px; max-height:110px; overflow-y:auto; background:rgba(0,0,0,0.2); border-radius:14px; padding:6px 10px;"></div>
 
       <hr style="border-color:rgba(255,255,255,0.15); margin:4px 0;">
@@ -371,11 +348,26 @@
           <label><i class="fa-regular fa-clock"></i> Waktu (menit)</label>
           <input type="number" id="timerInput" value="30" min="1">
         </div>
-        <!-- TAMBAHAN: input jumlah soal -->
         <div class="settingBox">
           <label><i class="fa-solid fa-list-ol"></i> Jumlah Soal</label>
           <input type="number" id="soalCountInput" value="10" min="1" max="100">
         </div>
+
+        <!-- IMPORT SOAL SECTION -->
+        <div class="settingBox">
+          <label style="margin-bottom:6px; display:block;"><i class="fa-solid fa-upload"></i> Impor Soal (JSON)</label>
+          <label for="importFileInput" class="file-label">
+            <i class="fa-solid fa-folder-open"></i> Pilih File JSON
+          </label>
+          <input type="file" id="importFileInput" accept=".json" style="display:none;">
+          <div class="import-info" style="margin-top:6px;">
+            <span id="importCount">0 soal siap ditempatkan</span>
+            <button id="clearImportBtn" style="width:auto; padding:6px 12px; font-size:12px; background:rgba(239,68,68,0.6);">
+              <i class="fa-solid fa-trash"></i> Bersihkan
+            </button>
+          </div>
+        </div>
+
         <button id="drawBtn"><i class="fa-solid fa-draw-polygon"></i> Gambar Area</button>
         <button id="stopBtn"><i class="fa-solid fa-stop"></i> Stop</button>
         <button id="exportBtn" class="btn-export"><i class="fa-solid fa-file-export"></i> Export Game</button>
@@ -383,7 +375,7 @@
     </div>
   </div>
 
-  <!-- QUIZ MODAL (MULTIPLE CHOICE) -->
+  <!-- QUIZ MODAL -->
   <div id="quizOverlay" class="quiz-overlay hidden">
     <div class="quiz-card">
       <h3 id="quizQuestion">Pertanyaan muncul di sini</h3>
@@ -397,17 +389,16 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     (function() {
-      // ========================= CONFIG =========================
       const ADMIN_PASSWORD = "1234";
-      const SHEET_URL = "https://script.google.com/macros/s/AKfycbypg12ibWOv2ENrefM9LGj5r8H4PJMXZjp39CSaLqzTy6dRrnenRADv3oMWmsbvhr1j/exec"; // Ganti dengan URL Web App Anda
+      const SHEET_URL = "https://script.google.com/macros/s/AKfycbypg12ibWOv2ENrefM9LGj5r8H4PJMXZjp39CSaLqzTy6dRrnenRADv3oMWmsbvhr1j/exec";
 
-      // ========================= GLOBAL STATE =========================
       let map, polygon = null, polygonLayer = null;
       let drawing = false, path = [];
       let allBoxes = [], activeBoxes = [], unusedBoxes = [];
+      let pendingImports = []; // <-- soal impor yang belum ditempatkan
       let playerMarker, visibleMarkers = [], watchId;
       let gameTimer, timeLeft = 0, gameDuration = 30;
-      let targetBoxCount = 10;  // <-- JUMLAH SOAL YANG AKAN DIMAINKAN
+      let targetBoxCount = 10;
       let currentPlayerName = "", currentPlayerClass = "", gameStarted = false;
       let mode = 'player';
       let lives = 5, maxLives = 5;
@@ -415,15 +406,13 @@
       let compassActive = false, compassTimer = null;
       let enemy = null, enemyInterval = null;
       let safeZoneCircle = null, safeZoneInterval = null;
-      // Item system: multiple items (max 5)
-      let items = []; // array of {type, lat, lng, marker}
+      let items = [];
       const MAX_ITEMS = 5;
       let itemSpawnInterval = null;
       let quizActive = false, currentQuizBox = null, currentQuizIndex = -1;
       let minimapPanel = document.getElementById('mainPanel');
       let minimized = false;
 
-      // ========================= INIT MAP =========================
       function init() {
         map = L.map('map').setView([-8.17, 113.7], 18);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -436,21 +425,23 @@
         updateLivesDisplay();
         initQuizModal();
 
-        // Event listener untuk input jumlah soal
         document.getElementById('soalCountInput').addEventListener('change', function() {
           const val = parseInt(this.value);
           if (val && val > 0) {
             targetBoxCount = val;
-            updateProgressDisplay(); // update tampilan progress jika perlu
+            updateProgressDisplay();
           } else {
-            this.value = targetBoxCount; // reset ke nilai sebelumnya
+            this.value = targetBoxCount;
           }
         });
+
+        // IMPORT HANDLER
+        document.getElementById('importFileInput').addEventListener('change', handleImportFile);
+        document.getElementById('clearImportBtn').addEventListener('click', clearImports);
       }
 
       window.onload = init;
 
-      // ========================= MODE SWITCH =========================
       function setMode(m) {
         mode = m;
         document.getElementById('adminPanel').classList.toggle('hidden', m !== 'admin');
@@ -500,26 +491,61 @@
 
       function migrateBoxes(boxes) {
         return boxes.map(b => {
-          if (b.options && Array.isArray(b.options) && b.options.length === 4 && typeof b.correct === 'number') {
-            return b;
-          }
+          if (b.options && Array.isArray(b.options) && b.options.length === 4 && typeof b.correct === 'number') return b;
           if (b.answer && !b.options) {
             let correctAnswer = b.answer.toLowerCase();
             let distractors = ["salah1", "salah2", "salah3"];
             let options = [correctAnswer, ...distractors].sort(() => Math.random() - 0.5);
             let correctIndex = options.indexOf(correctAnswer);
-            return {
-              lat: b.lat,
-              lng: b.lng,
-              question: b.question || "Pertanyaan lama",
-              options: options,
-              correct: correctIndex,
-              found: b.found || false,
-              opened: b.opened || false
-            };
+            return { lat: b.lat, lng: b.lng, question: b.question || "Pertanyaan lama", options, correct: correctIndex, found: false, opened: false };
           }
           return b;
         });
+      }
+
+      // ========================= IMPORT SOAL =========================
+      function handleImportFile(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          try {
+            const data = JSON.parse(ev.target.result);
+            if (!Array.isArray(data)) throw new Error("Format harus array JSON.");
+            let count = 0;
+            data.forEach(item => {
+              if (item.question && Array.isArray(item.options) && item.options.length === 4 && typeof item.correct === 'number') {
+                pendingImports.push({
+                  question: item.question,
+                  options: item.options,
+                  correct: item.correct
+                });
+                count++;
+              }
+            });
+            if (count === 0) {
+              alert("Tidak ada soal valid di file. Setiap soal harus memiliki 'question', 'options' (array 4 string), dan 'correct' (index 0-3).");
+            } else {
+              updateImportDisplay();
+              alert(`✅ ${count} soal berhasil diimpor! Klik di dalam area untuk menempatkan soal.`);
+            }
+          } catch (err) {
+            alert("Gagal membaca file: " + err.message);
+          }
+        };
+        reader.readAsText(file);
+        // Reset file input agar bisa memilih file yang sama lagi
+        e.target.value = '';
+      }
+
+      function clearImports() {
+        pendingImports = [];
+        updateImportDisplay();
+      }
+
+      function updateImportDisplay() {
+        document.getElementById('importCount').textContent = `${pendingImports.length} soal siap ditempatkan`;
+        // Jika tidak ada pending, bisa disable clear button? Tidak perlu.
       }
 
       // ========================= ADMIN LOGIN =========================
@@ -529,7 +555,7 @@
         else alert("Password salah!");
       };
 
-      // ========================= DRAW AREA (ADMIN) =========================
+      // ========================= DRAW AREA =========================
       document.getElementById('drawBtn').onclick = () => {
         drawing = true;
         path = [];
@@ -544,7 +570,7 @@
         alert("✅ Area selesai dibuat!");
       };
 
-      // ========================= MAP CLICK (ADMIN: DRAW / ADD BOX) =========================
+      // ========================= MAP CLICK (ADMIN) =========================
       function mapClick(e) {
         if (mode !== 'admin') return;
         if (drawing) {
@@ -555,21 +581,37 @@
         if (!polygon) return alert("Buat area terlebih dahulu!");
         if (!insidePolygon(e.latlng, polygon)) return alert("Klik di dalam area!");
 
+        // Jika ada soal impor yang menunggu, tempatkan langsung
+        if (pendingImports.length > 0) {
+          const imported = pendingImports.shift(); // ambil yang pertama
+          allBoxes.push({
+            lat: e.latlng.lat,
+            lng: e.latlng.lng,
+            question: imported.question,
+            options: imported.options,
+            correct: imported.correct,
+            found: false,
+            opened: false
+          });
+          L.marker(e.latlng, {
+            icon: L.icon({ iconUrl: 'https://cdn-icons-png.flaticon.com/512/3097/3097133.png', iconSize: [30, 30] })
+          }).addTo(map);
+          updateImportDisplay();
+          // Opsional: tampilkan info
+          alert(`📍 Soal ditempatkan! Sisa: ${pendingImports.length} soal.`);
+          return;
+        }
+
+        // Jika tidak ada impor, tambah manual seperti sebelumnya
         let q = prompt("Masukkan pertanyaan:");
         if (!q) return;
-        let optA = prompt("Opsi A:");
-        if (!optA) return;
-        let optB = prompt("Opsi B:");
-        if (!optB) return;
-        let optC = prompt("Opsi C:");
-        if (!optC) return;
-        let optD = prompt("Opsi D:");
-        if (!optD) return;
+        let optA = prompt("Opsi A:"); if (!optA) return;
+        let optB = prompt("Opsi B:"); if (!optB) return;
+        let optC = prompt("Opsi C:"); if (!optC) return;
+        let optD = prompt("Opsi D:"); if (!optD) return;
         let correctLetter = prompt("Jawaban benar? (A/B/C/D):");
-        if (!correctLetter || !['A', 'B', 'C', 'D'].includes(correctLetter.toUpperCase())) {
-          return alert("Harap masukkan A, B, C, atau D.");
-        }
-        let correctIndex = { 'A': 0, 'B': 1, 'C': 2, 'D': 3 }[correctLetter.toUpperCase()];
+        if (!correctLetter || !['A','B','C','D'].includes(correctLetter.toUpperCase())) return alert("Harap masukkan A, B, C, atau D.");
+        let correctIndex = { 'A':0, 'B':1, 'C':2, 'D':3 }[correctLetter.toUpperCase()];
 
         allBoxes.push({
           lat: e.latlng.lat,
@@ -581,10 +623,7 @@
           opened: false
         });
         L.marker(e.latlng, {
-          icon: L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/3097/3097133.png',
-            iconSize: [30, 30]
-          })
+          icon: L.icon({ iconUrl: 'https://cdn-icons-png.flaticon.com/512/3097/3097133.png', iconSize: [30, 30] })
         }).addTo(map);
         alert("✅ Soal pilihan ganda ditambahkan! Total: " + allBoxes.length);
       }
@@ -618,16 +657,14 @@
         alert("📤 Game diexport sebagai " + code + ".json (main " + targetBoxCount + " soal)");
       };
 
-      // ========================= START GAME =========================
+      // ========================= START GAME (sama seperti sebelumnya) =========================
       document.getElementById('startBtn').onclick = () => {
         const inputName = document.getElementById('playerName').value.trim();
         const inputClass = document.getElementById('playerClass').value.trim();
         if (!inputName || !inputClass) return alert("Lengkapi nama dan kelas!");
-        // Validasi jumlah soal mencukupi
         if (allBoxes.length < targetBoxCount) {
           return alert(`Minimal ${targetBoxCount} soal tersedia dalam game! Saat ini hanya ada ${allBoxes.length} soal.`);
         }
-
         if (!gameStarted) {
           currentPlayerName = inputName;
           currentPlayerClass = inputClass;
@@ -678,7 +715,6 @@
         activeBoxes.forEach(b => { b.found = false; b.opened = false; });
       }
 
-      // ========================= TIMER =========================
       function startGameTimer() {
         clearInterval(gameTimer);
         gameDuration = parseInt(document.getElementById('timerInput').value) || 30;
@@ -692,8 +728,8 @@
       }
 
       function updateTimerDisplay() {
-        let m = String(Math.floor(timeLeft / 60)).padStart(2, '0');
-        let s = String(timeLeft % 60).padStart(2, '0');
+        let m = String(Math.floor(timeLeft / 60)).padStart(2,'0');
+        let s = String(timeLeft % 60).padStart(2,'0');
         document.getElementById('timerDisplay').textContent = `⏳ ${m}:${s}`;
       }
 
@@ -711,30 +747,27 @@
         alert(reason);
       }
 
-      // ========================= GPS PLAYER =========================
       function startPlayerGPS() {
         if (watchId) navigator.geolocation.clearWatch(watchId);
         watchId = navigator.geolocation.watchPosition(pos => {
           let lat = pos.coords.latitude, lng = pos.coords.longitude;
           let me = [lat, lng];
           map.setView(me, 20);
-          if (!playerMarker)
-            playerMarker = L.circleMarker(me, { radius: 8, color: '#3b82f6', fillOpacity: 0.9, weight: 3 }).addTo(map);
+          if (!playerMarker) playerMarker = L.circleMarker(me, { radius: 8, color: '#3b82f6', fillOpacity: 0.9, weight: 3 }).addTo(map);
           else playerMarker.setLatLng(me);
           updateBoxes(me);
           checkItemPickup(me);
-        }, () => alert("GPS error! Pastikan izin lokasi diaktifkan."), { enableHighAccuracy: true, maximumAge: 2000, timeout: 10000 });
+        }, () => alert("GPS error!"), { enableHighAccuracy: true, maximumAge: 2000, timeout: 10000 });
       }
 
       function getDistance(lat1, lon1, lat2, lon2) {
         const R = 6371000;
         const dLat = (lat2 - lat1) * Math.PI / 180;
         const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
-        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
       }
 
-      // ========================= UPDATE BOXES & QUIZ TRIGGER =========================
       function updateBoxes(me) {
         visibleMarkers.forEach(m => map.removeLayer(m));
         visibleMarkers = [];
@@ -744,10 +777,7 @@
           let d = getDistance(me[0], me[1], box.lat, box.lng);
           if (showAll || d <= 12) {
             let marker = L.marker([box.lat, box.lng], {
-              icon: L.icon({
-                iconUrl: 'https://cdn-icons-png.flaticon.com/512/3097/3097133.png',
-                iconSize: [36, 36]
-              })
+              icon: L.icon({ iconUrl: 'https://cdn-icons-png.flaticon.com/512/3097/3097133.png', iconSize: [36,36] })
             }).addTo(map);
             visibleMarkers.push(marker);
           }
@@ -758,15 +788,9 @@
         });
       }
 
-      // ========================= QUIZ MODAL (MULTIPLE CHOICE) =========================
       function initQuizModal() {
-        const overlay = document.getElementById('quizOverlay');
-        const buttons = overlay.querySelectorAll('.quiz-option');
-        buttons.forEach(btn => {
-          btn.addEventListener('click', function() {
-            const index = parseInt(this.dataset.index);
-            handleQuizAnswer(index);
-          });
+        document.querySelectorAll('#quizOverlay .quiz-option').forEach(btn => {
+          btn.addEventListener('click', function() { handleQuizAnswer(parseInt(this.dataset.index)); });
         });
       }
 
@@ -777,9 +801,9 @@
         currentQuizIndex = index;
         document.getElementById('quizQuestion').textContent = box.question;
         const buttons = document.querySelectorAll('#quizOverlay .quiz-option');
-        const labels = ['A', 'B', 'C', 'D'];
+        const labels = ['A','B','C','D'];
         buttons.forEach((btn, i) => {
-          btn.textContent = labels[i] + '. ' + (box.options[i] || 'Opsi ' + (i + 1));
+          btn.textContent = labels[i] + '. ' + (box.options[i] || 'Opsi '+(i+1));
           btn.className = 'quiz-option';
           btn.disabled = false;
         });
@@ -799,11 +823,7 @@
         if (selectedIndex === correctIndex) {
           selectedBtn.classList.add('correct-flash');
           box.found = true;
-          setTimeout(() => {
-            closeQuizModal();
-            updateUI();
-            checkWin();
-          }, 600);
+          setTimeout(() => { closeQuizModal(); updateUI(); checkWin(); }, 600);
         } else {
           selectedBtn.classList.add('wrong-flash');
           correctBtn.classList.add('correct-flash');
@@ -826,8 +846,7 @@
         quizActive = false;
         currentQuizBox = null;
         currentQuizIndex = -1;
-        const buttons = document.querySelectorAll('#quizOverlay .quiz-option');
-        buttons.forEach(b => { b.className = 'quiz-option'; b.disabled = false; });
+        document.querySelectorAll('#quizOverlay .quiz-option').forEach(b => { b.className = 'quiz-option'; b.disabled = false; });
       }
 
       function checkWin() {
@@ -838,20 +857,14 @@
         }
       }
 
-      // ========================= ENEMY AI =========================
+      // ... enemy, safe zone, items, UI functions (same as before, no changes needed)
       function startEnemyAI() {
         if (!polygon || polygon.length === 0) return;
         const randomPoint = getRandomPointInPolygon();
         enemy = {
-          lat: randomPoint[0],
-          lng: randomPoint[1],
+          lat: randomPoint[0], lng: randomPoint[1],
           marker: L.marker([randomPoint[0], randomPoint[1]], {
-            icon: L.divIcon({
-              className: 'enemy-icon',
-              html: '<i class="fa-solid fa-ghost"></i>',
-              iconSize: [36, 36],
-              iconAnchor: [18, 18]
-            })
+            icon: L.divIcon({ className: 'enemy-icon', html: '<i class="fa-solid fa-ghost"></i>', iconSize: [36,36], iconAnchor: [18,18] })
           }).addTo(map),
           speed: 1.8,
           attackCooldown: false
@@ -864,15 +877,14 @@
           const angle = Math.atan2(playerPos.lat - enemy.lat, playerPos.lng - enemy.lng);
           const step = enemy.speed * 0.5;
           enemy.lat += step * Math.sin(angle) / 111320;
-          enemy.lng += step * Math.cos(angle) / (111320 * Math.cos(playerPos.lat * Math.PI / 180));
+          enemy.lng += step * Math.cos(angle) / (111320 * Math.cos(playerPos.lat * Math.PI/180));
           enemy.marker.setLatLng([enemy.lat, enemy.lng]);
           if (dist < 2 && !inSafe && !shieldActive && !enemy.attackCooldown) {
             reduceLife();
             enemy.attackCooldown = true;
             setTimeout(() => { if (enemy) enemy.attackCooldown = false; }, 3000);
             const newPos = getRandomPointInPolygon();
-            enemy.lat = newPos[0];
-            enemy.lng = newPos[1];
+            enemy.lat = newPos[0]; enemy.lng = newPos[1];
             enemy.marker.setLatLng(newPos);
           }
         }, 500);
@@ -882,56 +894,43 @@
         if (lives <= 0) return;
         lives--;
         updateLivesDisplay();
-        if (lives <= 0) {
-          endGame("💀 Nyawa habis! Kamu tertangkap musuh.");
-        }
+        if (lives <= 0) endGame("💀 Nyawa habis!");
       }
 
       function isPlayerInSafeZone(playerLatLng) {
         if (!safeZoneCircle) return false;
         const center = safeZoneCircle.getLatLng();
-        const dist = getDistance(playerLatLng.lat, playerLatLng.lng, center.lat, center.lng);
-        return dist <= safeZoneCircle.getRadius();
+        return getDistance(playerLatLng.lat, playerLatLng.lng, center.lat, center.lng) <= safeZoneCircle.getRadius();
       }
 
       function getRandomPointInPolygon() {
         if (!polygon || polygon.length === 0) return [-8.17, 113.7];
         const bounds = L.polygon(polygon).getBounds();
-        for (let i = 0; i < 100; i++) {
-          const lat = bounds.getSouth() + Math.random() * (bounds.getNorth() - bounds.getSouth());
-          const lng = bounds.getWest() + Math.random() * (bounds.getEast() - bounds.getWest());
+        for (let i=0; i<100; i++) {
+          const lat = bounds.getSouth() + Math.random()*(bounds.getNorth()-bounds.getSouth());
+          const lng = bounds.getWest() + Math.random()*(bounds.getEast()-bounds.getWest());
           if (insidePolygon({ lat, lng }, polygon)) return [lat, lng];
         }
         return polygon[0];
       }
 
-      // ========================= SAFE ZONE =========================
       function startSafeZone() {
         if (!polygon) return;
         const moveSafeZone = () => {
           const pos = getRandomPointInPolygon();
           if (safeZoneCircle) map.removeLayer(safeZoneCircle);
-          safeZoneCircle = L.circle(pos, {
-            radius: 25,
-            className: 'safe-zone-circle',
-            fillOpacity: 0.15,
-            color: '#22d3ee',
-            weight: 4
-          }).addTo(map);
-          safeZoneCircle.bindTooltip("🛡️ Zona Aman", { permanent: true, direction: "center", className: 'safe-tooltip' });
+          safeZoneCircle = L.circle(pos, { radius:25, className:'safe-zone-circle', fillOpacity:0.15, color:'#22d3ee', weight:4 }).addTo(map);
+          safeZoneCircle.bindTooltip("🛡️ Zona Aman", { permanent:true, direction:"center", className:'safe-tooltip' });
         };
         moveSafeZone();
         safeZoneInterval = setInterval(moveSafeZone, 60000);
       }
 
-      // ========================= ITEM SYSTEM (MAX 5) =========================
       function startItemSpawner() {
         clearInterval(itemSpawnInterval);
         const maintainItems = () => {
           if (!gameStarted || !playerMarker || !polygon) return;
-          while (items.length < MAX_ITEMS) {
-            spawnRandomItem();
-          }
+          while (items.length < MAX_ITEMS) spawnRandomItem();
         };
         maintainItems();
         itemSpawnInterval = setInterval(maintainItems, 5000);
@@ -940,48 +939,46 @@
       function spawnRandomItem() {
         if (!playerMarker || !polygon) return;
         const playerPos = playerMarker.getLatLng();
-        const types = ['potion', 'potion', 'shield', 'compass'];
-        const type = types[Math.floor(Math.random() * types.length)];
-        for (let attempt = 0; attempt < 10; attempt++) {
+        const types = ['potion','potion','shield','compass'];
+        const type = types[Math.floor(Math.random()*types.length)];
+        for (let attempt=0; attempt<10; attempt++) {
           const offset = randomOffset(30);
           const itemLat = playerPos.lat + offset.dLat;
           const itemLng = playerPos.lng + offset.dLng;
-          if (insidePolygon({ lat: itemLat, lng: itemLng }, polygon)) {
+          if (insidePolygon({ lat:itemLat, lng:itemLng }, polygon)) {
             const iconHtml = {
               potion: '<i class="fa-solid fa-flask" style="color:#a78bfa;font-size:24px;"></i>',
               shield: '<i class="fa-solid fa-shield-haltered" style="color:#facc15;font-size:24px;"></i>',
               compass: '<i class="fa-solid fa-compass" style="color:#fb923c;font-size:24px;"></i>'
             };
             const marker = L.marker([itemLat, itemLng], {
-              icon: L.divIcon({ className: 'item-icon', html: iconHtml[type], iconSize: [30, 30], iconAnchor: [15, 15] })
+              icon: L.divIcon({ className:'item-icon', html:iconHtml[type], iconSize:[30,30], iconAnchor:[15,15] })
             }).addTo(map);
-            items.push({ type, lat: itemLat, lng: itemLng, marker });
+            items.push({ type, lat:itemLat, lng:itemLng, marker });
             return;
           }
         }
       }
 
       function randomOffset(radiusMeters) {
-        const angle = Math.random() * 2 * Math.PI;
-        const dist = Math.random() * radiusMeters;
+        const angle = Math.random()*2*Math.PI;
+        const dist = Math.random()*radiusMeters;
         const dLat = dist * Math.cos(angle) / 111320;
         const refLat = (playerMarker ? playerMarker.getLatLng().lat : -8.17);
-        const dLng = dist * Math.sin(angle) / (111320 * Math.cos(refLat * Math.PI / 180));
+        const dLng = dist * Math.sin(angle) / (111320 * Math.cos(refLat * Math.PI/180));
         return { dLat, dLng };
       }
 
       function checkItemPickup(playerPos) {
-        if (!playerPos || items.length === 0) return;
-        for (let i = items.length - 1; i >= 0; i--) {
+        if (!playerPos || items.length===0) return;
+        for (let i=items.length-1; i>=0; i--) {
           const item = items[i];
           const d = getDistance(playerPos[0], playerPos[1], item.lat, item.lng);
           if (d <= 6) {
             applyItemEffect(item.type);
             map.removeLayer(item.marker);
-            items.splice(i, 1);
-            if (gameStarted && items.length < MAX_ITEMS) {
-              spawnRandomItem();
-            }
+            items.splice(i,1);
+            if (gameStarted && items.length < MAX_ITEMS) spawnRandomItem();
             updateEffectsDisplay();
             break;
           }
@@ -989,16 +986,15 @@
       }
 
       function applyItemEffect(type) {
-        if (type === 'potion') {
-          if (lives < maxLives) { lives++; updateLivesDisplay(); }
-        } else if (type === 'shield') {
+        if (type==='potion') { if (lives<maxLives) { lives++; updateLivesDisplay(); } }
+        else if (type==='shield') {
           if (shieldTimer) clearTimeout(shieldTimer);
           shieldActive = true;
-          shieldTimer = setTimeout(() => { shieldActive = false; updateEffectsDisplay(); }, 300000);
-        } else if (type === 'compass') {
+          shieldTimer = setTimeout(() => { shieldActive=false; updateEffectsDisplay(); }, 300000);
+        } else if (type==='compass') {
           if (compassTimer) clearTimeout(compassTimer);
           compassActive = true;
-          compassTimer = setTimeout(() => { compassActive = false; updateEffectsDisplay(); }, 15000);
+          compassTimer = setTimeout(() => { compassActive=false; updateEffectsDisplay(); }, 15000);
         }
         updateEffectsDisplay();
       }
@@ -1006,10 +1002,8 @@
       function updateEffectsDisplay() {
         const container = document.getElementById('activeEffects');
         let html = '';
-        if (shieldActive)
-          html += '<span style="background:#facc15;color:#000;padding:4px 12px;border-radius:20px;font-weight:600;">🛡️ Shield 5 menit</span>';
-        if (compassActive)
-          html += '<span style="background:#fb923c;color:#000;padding:4px 12px;border-radius:20px;font-weight:600;">🧭 Kompas 15 detik</span>';
+        if (shieldActive) html += '<span style="background:#facc15;color:#000;padding:4px 12px;border-radius:20px;font-weight:600;">🛡️ Shield 5 menit</span>';
+        if (compassActive) html += '<span style="background:#fb923c;color:#000;padding:4px 12px;border-radius:20px;font-weight:600;">🧭 Kompas 15 detik</span>';
         container.innerHTML = html;
       }
 
@@ -1022,39 +1016,27 @@
         document.getElementById('progressFill').style.width = '0%';
       }
 
-      // ========================= UI UPDATE =========================
       function updateUI() {
         let found = activeBoxes.filter(b => b.found).length;
         document.getElementById('progressText').textContent = `${found}/${targetBoxCount}`;
-        document.getElementById('progressFill').style.width = (found / targetBoxCount * 100) + '%';
+        document.getElementById('progressFill').style.width = (found/targetBoxCount*100) + '%';
         document.getElementById('infoText').textContent = `👤 ${currentPlayerName} | 🏫 ${currentPlayerClass}`;
         const list = document.getElementById('playerList');
-        list.innerHTML = activeBoxes.map((b, i) =>
-          `<div class="${b.found ? 'found' : ''}" style="padding:2px 0;">📦 Soal ${i+1} ${b.found ? '✅' : '🔒'}</div>`
-        ).join('');
+        list.innerHTML = activeBoxes.map((b,i) => `<div class="${b.found?'found':''}" style="padding:2px 0;">📦 Soal ${i+1} ${b.found?'✅':'🔒'}</div>`).join('');
       }
 
-      // ========================= SEND TO SHEET =========================
       async function sendResult(status) {
-        let found = activeBoxes.filter(b => b.found).length;
-        let m = String(Math.floor(timeLeft / 60)).padStart(2, '0');
-        let s = String(timeLeft % 60).padStart(2, '0');
-        const data = {
-          nama: currentPlayerName,
-          kelas: currentPlayerClass,
-          progress: `${found}/${targetBoxCount}`,
-          waktu: `${m}:${s}`,
-          status
-        };
+        let found = activeBoxes.filter(b=>b.found).length;
+        let m = String(Math.floor(timeLeft/60)).padStart(2,'0');
+        let s = String(timeLeft%60).padStart(2,'0');
         try {
-          await fetch(SHEET_URL, { method: "POST", body: JSON.stringify(data) });
-          console.log("✅ Data terkirim ke spreadsheet");
-        } catch (e) {
-          console.log("⚠️ Gagal kirim data:", e);
-        }
+          await fetch(SHEET_URL, { method:"POST", body:JSON.stringify({
+            nama:currentPlayerName, kelas:currentPlayerClass,
+            progress:`${found}/${targetBoxCount}`, waktu:`${m}:${s}`, status
+          })});
+        } catch(e) {}
       }
 
-      // ========================= MINIMIZE PANEL =========================
       document.getElementById('togglePanelBtn').onclick = () => {
         minimized = !minimized;
         if (minimized) {
@@ -1065,7 +1047,6 @@
           document.getElementById('togglePanelBtn').innerHTML = '<i class="fa-solid fa-xmark"></i>';
         }
       };
-
     })();
   </script>
 </body>
