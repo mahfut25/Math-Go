@@ -246,12 +246,8 @@
       animation: fadeIn 0.25s ease;
     }
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
     .quiz-card {
       background: rgba(15, 23, 42, 0.9);
@@ -375,6 +371,11 @@
           <label><i class="fa-regular fa-clock"></i> Waktu (menit)</label>
           <input type="number" id="timerInput" value="30" min="1">
         </div>
+        <!-- TAMBAHAN: input jumlah soal -->
+        <div class="settingBox">
+          <label><i class="fa-solid fa-list-ol"></i> Jumlah Soal</label>
+          <input type="number" id="soalCountInput" value="10" min="1" max="100">
+        </div>
         <button id="drawBtn"><i class="fa-solid fa-draw-polygon"></i> Gambar Area</button>
         <button id="stopBtn"><i class="fa-solid fa-stop"></i> Stop</button>
         <button id="exportBtn" class="btn-export"><i class="fa-solid fa-file-export"></i> Export Game</button>
@@ -393,8 +394,7 @@
     </div>
   </div>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-  </script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     (function() {
       // ========================= CONFIG =========================
@@ -402,38 +402,24 @@
       const SHEET_URL = "https://script.google.com/macros/s/AKfycbypg12ibWOv2ENrefM9LGj5r8H4PJMXZjp39CSaLqzTy6dRrnenRADv3oMWmsbvhr1j/exec"; // Ganti dengan URL Web App Anda
 
       // ========================= GLOBAL STATE =========================
-      let map, polygon = null,
-        polygonLayer = null;
-      let drawing = false,
-        path = [];
-      let allBoxes = [],
-        activeBoxes = [],
-        unusedBoxes = [];
-      let playerMarker, visibleMarkers = [],
-        watchId;
-      let gameTimer, timeLeft = 0,
-        gameDuration = 30;
-      let currentPlayerName = "",
-        currentPlayerClass = "",
-        gameStarted = false;
+      let map, polygon = null, polygonLayer = null;
+      let drawing = false, path = [];
+      let allBoxes = [], activeBoxes = [], unusedBoxes = [];
+      let playerMarker, visibleMarkers = [], watchId;
+      let gameTimer, timeLeft = 0, gameDuration = 30;
+      let targetBoxCount = 10;  // <-- JUMLAH SOAL YANG AKAN DIMAINKAN
+      let currentPlayerName = "", currentPlayerClass = "", gameStarted = false;
       let mode = 'player';
-      let lives = 5,
-        maxLives = 5;
-      let shieldActive = false,
-        shieldTimer = null;
-      let compassActive = false,
-        compassTimer = null;
-      let enemy = null,
-        enemyInterval = null;
-      let safeZoneCircle = null,
-        safeZoneInterval = null;
+      let lives = 5, maxLives = 5;
+      let shieldActive = false, shieldTimer = null;
+      let compassActive = false, compassTimer = null;
+      let enemy = null, enemyInterval = null;
+      let safeZoneCircle = null, safeZoneInterval = null;
       // Item system: multiple items (max 5)
       let items = []; // array of {type, lat, lng, marker}
       const MAX_ITEMS = 5;
       let itemSpawnInterval = null;
-      let quizActive = false,
-        currentQuizBox = null,
-        currentQuizIndex = -1;
+      let quizActive = false, currentQuizBox = null, currentQuizIndex = -1;
       let minimapPanel = document.getElementById('mainPanel');
       let minimized = false;
 
@@ -449,6 +435,17 @@
         updateTimerDisplay();
         updateLivesDisplay();
         initQuizModal();
+
+        // Event listener untuk input jumlah soal
+        document.getElementById('soalCountInput').addEventListener('change', function() {
+          const val = parseInt(this.value);
+          if (val && val > 0) {
+            targetBoxCount = val;
+            updateProgressDisplay(); // update tampilan progress jika perlu
+          } else {
+            this.value = targetBoxCount; // reset ke nilai sebelumnya
+          }
+        });
       }
 
       window.onload = init;
@@ -458,7 +455,6 @@
         mode = m;
         document.getElementById('adminPanel').classList.toggle('hidden', m !== 'admin');
         if (m === 'player') {
-          // Izinkan zoom, tapi tetap kunci dragging agar posisi mengikuti pemain
           map.dragging.disable();
           map.touchZoom.enable();
           map.doubleClickZoom.enable();
@@ -482,26 +478,31 @@
           allBoxes = migrateBoxes(data.boxes || []);
           gameDuration = data.gameDuration || 30;
           document.getElementById('timerInput').value = gameDuration;
+          if (data.targetBoxCount) {
+            targetBoxCount = data.targetBoxCount;
+            document.getElementById('soalCountInput').value = targetBoxCount;
+          } else {
+            targetBoxCount = 10;
+            document.getElementById('soalCountInput').value = 10;
+          }
           if (data.polygonPath) {
             path = data.polygonPath;
             polygon = path;
             if (polygonLayer) map.removeLayer(polygonLayer);
             polygonLayer = L.polygon(path, { color: '#ef4444', fillOpacity: 0.15, weight: 3 }).addTo(map);
           }
-          alert("🎮 Game berhasil dimuat! (" + allBoxes.length + " soal)");
+          updateProgressDisplay();
+          alert("🎮 Game berhasil dimuat! (" + allBoxes.length + " soal, main " + targetBoxCount + " soal)");
         } catch (e) {
           alert("Gagal load game: " + e.message);
         }
       };
 
-      // Konversi format lama (isian) ke pilihan ganda jika diperlukan
       function migrateBoxes(boxes) {
         return boxes.map(b => {
-          if (b.options && Array.isArray(b.options) && b.options.length === 4 && typeof b.correct ===
-            'number') {
-            return b; // sudah format baru
+          if (b.options && Array.isArray(b.options) && b.options.length === 4 && typeof b.correct === 'number') {
+            return b;
           }
-          // Format lama: punya "answer" string
           if (b.answer && !b.options) {
             let correctAnswer = b.answer.toLowerCase();
             let distractors = ["salah1", "salah2", "salah3"];
@@ -554,7 +555,6 @@
         if (!polygon) return alert("Buat area terlebih dahulu!");
         if (!insidePolygon(e.latlng, polygon)) return alert("Klik di dalam area!");
 
-        // Tambah soal pilihan ganda
         let q = prompt("Masukkan pertanyaan:");
         if (!q) return;
         let optA = prompt("Opsi A:");
@@ -569,7 +569,7 @@
         if (!correctLetter || !['A', 'B', 'C', 'D'].includes(correctLetter.toUpperCase())) {
           return alert("Harap masukkan A, B, C, atau D.");
         }
-        let correctIndex = { 'A': 0, 'B': 1, 'C': 2, 'D': 3 } [correctLetter.toUpperCase()];
+        let correctIndex = { 'A': 0, 'B': 1, 'C': 2, 'D': 3 }[correctLetter.toUpperCase()];
 
         allBoxes.push({
           lat: e.latlng.lat,
@@ -590,14 +590,11 @@
       }
 
       function insidePolygon(point, vs) {
-        let x = point.lat,
-          y = point.lng;
+        let x = point.lat, y = point.lng;
         let inside = false;
         for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
-          let xi = vs[i][0],
-            yi = vs[i][1];
-          let xj = vs[j][0],
-            yj = vs[j][1];
+          let xi = vs[i][0], yi = vs[i][1];
+          let xj = vs[j][0], yj = vs[j][1];
           let intersect = ((yi > y) != (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
           if (intersect) inside = !inside;
         }
@@ -608,7 +605,8 @@
       document.getElementById('exportBtn').onclick = () => {
         if (allBoxes.length === 0) return alert("Belum ada soal untuk diexport!");
         gameDuration = parseInt(document.getElementById('timerInput').value) || 30;
-        const data = { gameDuration, polygonPath: path, boxes: allBoxes };
+        targetBoxCount = parseInt(document.getElementById('soalCountInput').value) || 10;
+        const data = { gameDuration, targetBoxCount, polygonPath: path, boxes: allBoxes };
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
@@ -617,7 +615,7 @@
         code = code.toUpperCase();
         a.download = code + ".json";
         a.click();
-        alert("📤 Game diexport sebagai " + code + ".json");
+        alert("📤 Game diexport sebagai " + code + ".json (main " + targetBoxCount + " soal)");
       };
 
       // ========================= START GAME =========================
@@ -625,7 +623,10 @@
         const inputName = document.getElementById('playerName').value.trim();
         const inputClass = document.getElementById('playerClass').value.trim();
         if (!inputName || !inputClass) return alert("Lengkapi nama dan kelas!");
-        if (allBoxes.length < 10) return alert("Minimal 10 soal tersedia dalam game!");
+        // Validasi jumlah soal mencukupi
+        if (allBoxes.length < targetBoxCount) {
+          return alert(`Minimal ${targetBoxCount} soal tersedia dalam game! Saat ini hanya ada ${allBoxes.length} soal.`);
+        }
 
         if (!gameStarted) {
           currentPlayerName = inputName;
@@ -656,7 +657,6 @@
         enemy = null;
         if (safeZoneCircle) map.removeLayer(safeZoneCircle);
         safeZoneCircle = null;
-        // Hapus semua item
         items.forEach(item => map.removeLayer(item.marker));
         items = [];
         visibleMarkers.forEach(m => map.removeLayer(m));
@@ -673,10 +673,9 @@
 
       function initRound() {
         let shuffled = [...allBoxes].sort(() => Math.random() - 0.5);
-        activeBoxes = shuffled.slice(0, 10);
-        unusedBoxes = shuffled.slice(10);
-        activeBoxes.forEach(b => { b.found = false;
-          b.opened = false; });
+        activeBoxes = shuffled.slice(0, targetBoxCount);
+        unusedBoxes = shuffled.slice(targetBoxCount);
+        activeBoxes.forEach(b => { b.found = false; b.opened = false; });
       }
 
       // ========================= TIMER =========================
@@ -688,8 +687,7 @@
         gameTimer = setInterval(() => {
           timeLeft--;
           updateTimerDisplay();
-          if (timeLeft <= 0) { clearInterval(gameTimer);
-            endGame("⏰ Waktu Habis"); }
+          if (timeLeft <= 0) { clearInterval(gameTimer); endGame("⏰ Waktu Habis"); }
         }, 1000);
       }
 
@@ -717,26 +715,22 @@
       function startPlayerGPS() {
         if (watchId) navigator.geolocation.clearWatch(watchId);
         watchId = navigator.geolocation.watchPosition(pos => {
-          let lat = pos.coords.latitude,
-            lng = pos.coords.longitude;
+          let lat = pos.coords.latitude, lng = pos.coords.longitude;
           let me = [lat, lng];
           map.setView(me, 20);
           if (!playerMarker)
-            playerMarker = L.circleMarker(me, { radius: 8, color: '#3b82f6', fillOpacity: 0.9, weight: 3 }).addTo(
-            map);
+            playerMarker = L.circleMarker(me, { radius: 8, color: '#3b82f6', fillOpacity: 0.9, weight: 3 }).addTo(map);
           else playerMarker.setLatLng(me);
           updateBoxes(me);
           checkItemPickup(me);
-        }, () => alert("GPS error! Pastikan izin lokasi diaktifkan."), { enableHighAccuracy: true, maximumAge: 2000,
-          timeout: 10000 });
+        }, () => alert("GPS error! Pastikan izin lokasi diaktifkan."), { enableHighAccuracy: true, maximumAge: 2000, timeout: 10000 });
       }
 
       function getDistance(lat1, lon1, lat2, lon2) {
         const R = 6371000;
         const dLat = (lat2 - lat1) * Math.PI / 180;
         const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(
-          dLon / 2) ** 2;
+        const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       }
 
@@ -815,7 +809,6 @@
           correctBtn.classList.add('correct-flash');
           setTimeout(() => {
             closeQuizModal();
-            // Ganti soal jika masih ada cadangan
             if (unusedBoxes.length > 0) {
               activeBoxes[currentQuizIndex] = unusedBoxes.shift();
               activeBoxes[currentQuizIndex].found = false;
@@ -834,13 +827,12 @@
         currentQuizBox = null;
         currentQuizIndex = -1;
         const buttons = document.querySelectorAll('#quizOverlay .quiz-option');
-        buttons.forEach(b => { b.className = 'quiz-option';
-          b.disabled = false; });
+        buttons.forEach(b => { b.className = 'quiz-option'; b.disabled = false; });
       }
 
       function checkWin() {
         let found = activeBoxes.filter(b => b.found).length;
-        if (found >= 10 && gameStarted) {
+        if (found >= targetBoxCount && gameStarted) {
           clearInterval(gameTimer);
           endGame("🏆 Semua kotak ditemukan! Selamat!");
         }
@@ -926,8 +918,7 @@
             color: '#22d3ee',
             weight: 4
           }).addTo(map);
-          safeZoneCircle.bindTooltip("🛡️ Zona Aman", { permanent: true, direction: "center",
-            className: 'safe-tooltip' });
+          safeZoneCircle.bindTooltip("🛡️ Zona Aman", { permanent: true, direction: "center", className: 'safe-tooltip' });
         };
         moveSafeZone();
         safeZoneInterval = setInterval(moveSafeZone, 60000);
@@ -936,23 +927,21 @@
       // ========================= ITEM SYSTEM (MAX 5) =========================
       function startItemSpawner() {
         clearInterval(itemSpawnInterval);
-        // Fungsi untuk menjaga jumlah item tetap maksimal
         const maintainItems = () => {
           if (!gameStarted || !playerMarker || !polygon) return;
           while (items.length < MAX_ITEMS) {
             spawnRandomItem();
           }
         };
-        maintainItems(); // langsung isi hingga 5
-        itemSpawnInterval = setInterval(maintainItems, 5000); // cek tiap 5 detik
+        maintainItems();
+        itemSpawnInterval = setInterval(maintainItems, 5000);
       }
 
       function spawnRandomItem() {
         if (!playerMarker || !polygon) return;
         const playerPos = playerMarker.getLatLng();
-        const types = ['potion', 'potion', 'shield', 'compass']; // weighted
+        const types = ['potion', 'potion', 'shield', 'compass'];
         const type = types[Math.floor(Math.random() * types.length)];
-        // Coba hingga 10 kali mencari posisi di dalam polygon
         for (let attempt = 0; attempt < 10; attempt++) {
           const offset = randomOffset(30);
           const itemLat = playerPos.lat + offset.dLat;
@@ -964,14 +953,12 @@
               compass: '<i class="fa-solid fa-compass" style="color:#fb923c;font-size:24px;"></i>'
             };
             const marker = L.marker([itemLat, itemLng], {
-              icon: L.divIcon({ className: 'item-icon', html: iconHtml[type], iconSize: [30, 30], iconAnchor: [15,
-                  15] })
+              icon: L.divIcon({ className: 'item-icon', html: iconHtml[type], iconSize: [30, 30], iconAnchor: [15, 15] })
             }).addTo(map);
             items.push({ type, lat: itemLat, lng: itemLng, marker });
-            return; // berhasil
+            return;
           }
         }
-        // jika gagal menemukan lokasi, tidak menambah item (nanti dicoba lagi)
       }
 
       function randomOffset(radiusMeters) {
@@ -992,30 +979,26 @@
             applyItemEffect(item.type);
             map.removeLayer(item.marker);
             items.splice(i, 1);
-            // Spawn satu item baru segera untuk menggantikan
             if (gameStarted && items.length < MAX_ITEMS) {
               spawnRandomItem();
             }
             updateEffectsDisplay();
-            break; // hanya satu item per deteksi (hindari spam)
+            break;
           }
         }
       }
 
       function applyItemEffect(type) {
         if (type === 'potion') {
-          if (lives < maxLives) { lives++;
-            updateLivesDisplay(); }
+          if (lives < maxLives) { lives++; updateLivesDisplay(); }
         } else if (type === 'shield') {
           if (shieldTimer) clearTimeout(shieldTimer);
           shieldActive = true;
-          shieldTimer = setTimeout(() => { shieldActive = false;
-            updateEffectsDisplay(); }, 300000);
+          shieldTimer = setTimeout(() => { shieldActive = false; updateEffectsDisplay(); }, 300000);
         } else if (type === 'compass') {
           if (compassTimer) clearTimeout(compassTimer);
           compassActive = true;
-          compassTimer = setTimeout(() => { compassActive = false;
-            updateEffectsDisplay(); }, 15000);
+          compassTimer = setTimeout(() => { compassActive = false; updateEffectsDisplay(); }, 15000);
         }
         updateEffectsDisplay();
       }
@@ -1024,11 +1007,9 @@
         const container = document.getElementById('activeEffects');
         let html = '';
         if (shieldActive)
-          html +=
-          '<span style="background:#facc15;color:#000;padding:4px 12px;border-radius:20px;font-weight:600;">🛡️ Shield 5 menit</span>';
+          html += '<span style="background:#facc15;color:#000;padding:4px 12px;border-radius:20px;font-weight:600;">🛡️ Shield 5 menit</span>';
         if (compassActive)
-          html +=
-          '<span style="background:#fb923c;color:#000;padding:4px 12px;border-radius:20px;font-weight:600;">🧭 Kompas 15 detik</span>';
+          html += '<span style="background:#fb923c;color:#000;padding:4px 12px;border-radius:20px;font-weight:600;">🧭 Kompas 15 detik</span>';
         container.innerHTML = html;
       }
 
@@ -1036,13 +1017,17 @@
         document.getElementById('livesText').textContent = `${lives}/${maxLives}`;
       }
 
+      function updateProgressDisplay() {
+        document.getElementById('progressText').textContent = `0/${targetBoxCount}`;
+        document.getElementById('progressFill').style.width = '0%';
+      }
+
       // ========================= UI UPDATE =========================
       function updateUI() {
         let found = activeBoxes.filter(b => b.found).length;
-        document.getElementById('progressText').textContent = `${found}/10`;
-        document.getElementById('progressFill').style.width = (found * 10) + '%';
-        document.getElementById('infoText').textContent =
-          `👤 ${currentPlayerName} | 🏫 ${currentPlayerClass}`;
+        document.getElementById('progressText').textContent = `${found}/${targetBoxCount}`;
+        document.getElementById('progressFill').style.width = (found / targetBoxCount * 100) + '%';
+        document.getElementById('infoText').textContent = `👤 ${currentPlayerName} | 🏫 ${currentPlayerClass}`;
         const list = document.getElementById('playerList');
         list.innerHTML = activeBoxes.map((b, i) =>
           `<div class="${b.found ? 'found' : ''}" style="padding:2px 0;">📦 Soal ${i+1} ${b.found ? '✅' : '🔒'}</div>`
@@ -1057,7 +1042,7 @@
         const data = {
           nama: currentPlayerName,
           kelas: currentPlayerClass,
-          progress: `${found}/10`,
+          progress: `${found}/${targetBoxCount}`,
           waktu: `${m}:${s}`,
           status
         };
