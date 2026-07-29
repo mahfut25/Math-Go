@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Latihan Penjumlahan & Pengurangan Bilangan Bulat - 50 Soal</title>
+    <title>Latihan Bilangan Bulat • 50 Soal • Fullscreen Lock + Exit</title>
     <style>
         :root {
             --bg: #f0f4f8;
@@ -12,7 +12,6 @@
             --primary-hover: #4338ca;
             --success: #10b981;
             --danger: #ef4444;
-            --warning: #f59e0b;
             --text: #1e293b;
             --text-light: #64748b;
             --border: #e2e8f0;
@@ -47,32 +46,77 @@
             margin: 0 auto;
         }
 
-        /* Header Card */
+        /* Header */
         .header-card {
             background: var(--card-bg);
             border-radius: var(--radius);
-            padding: 28px 32px;
+            padding: 20px 32px 16px;
             box-shadow: var(--shadow);
             margin-bottom: 24px;
-            text-align: center;
             border: 1px solid var(--border);
             position: sticky;
             top: 20px;
             z-index: 100;
             backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            overflow: hidden;
         }
 
-        .header-card h1 {
-            font-size: 1.8rem;
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        .header-top h1 {
+            font-size: 1.6rem;
             font-weight: 700;
             color: var(--primary);
-            margin-bottom: 6px;
             letter-spacing: -0.5px;
+            margin: 0;
         }
-        .header-card .subtitle {
-            font-size: 0.95rem;
+        .btn-minimize {
+            background: none;
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            width: 34px;
+            height: 34px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
             color: var(--text-light);
-            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            background: #f8fafc;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        .btn-minimize:hover {
+            background: #e2e8f0;
+            border-color: #cbd5e1;
+            color: var(--text);
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        .info-panel {
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        .header-card.collapsed .info-panel {
+            display: none;
+        }
+        .header-card.collapsed {
+            padding-bottom: 12px;
+        }
+        .header-card.collapsed .subtitle {
+            margin-bottom: 0;
         }
 
         .input-group {
@@ -81,11 +125,11 @@
             justify-content: center;
             gap: 12px;
             flex-wrap: wrap;
+            margin-bottom: 12px;
         }
         .input-group label {
             font-weight: 600;
             font-size: 1rem;
-            color: var(--text);
             white-space: nowrap;
         }
         .input-group input {
@@ -104,31 +148,15 @@
             box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
             background: #fff;
         }
-        .input-group input::placeholder {
-            color: #cbd5e1;
-        }
 
-        /* Score Bar */
         .score-bar {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 20px;
             flex-wrap: wrap;
-            margin-top: 16px;
-            padding-top: 14px;
-            border-top: 1px solid var(--border);
-        }
-        .score-item {
+            margin-bottom: 12px;
             font-weight: 600;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .score-value {
-            font-size: 1.4rem;
-            font-weight: 700;
         }
         .score-correct {
             color: var(--success);
@@ -138,6 +166,10 @@
         }
         .score-total {
             color: var(--primary);
+        }
+        .score-value {
+            font-size: 1.4rem;
+            font-weight: 700;
         }
 
         .btn {
@@ -152,12 +184,13 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            margin: 4px;
         }
-        .btn-check {
+        .btn-koreksi {
             background: var(--primary);
             color: #fff;
         }
-        .btn-check:hover {
+        .btn-koreksi:hover {
             background: var(--primary-hover);
             transform: translateY(-1px);
             box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
@@ -175,23 +208,22 @@
             transform: scale(0.96);
         }
 
-        /* Soal Cards */
+        /* Grid soal */
         .soal-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
             gap: 12px;
             margin-bottom: 24px;
         }
-
         @media (max-width: 500px) {
             .soal-grid {
                 grid-template-columns: 1fr;
             }
             .header-card {
-                padding: 20px 16px;
+                padding: 16px 16px 12px;
             }
-            .header-card h1 {
-                font-size: 1.4rem;
+            .header-top h1 {
+                font-size: 1.3rem;
             }
             .input-group input {
                 width: 100%;
@@ -209,10 +241,6 @@
             align-items: center;
             gap: 10px;
         }
-        .soal-card:hover {
-            border-color: #cbd5e1;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
-        }
         .soal-card.correct {
             border-color: var(--success) !important;
             background: var(--correct-bg) !important;
@@ -221,12 +249,6 @@
             border-color: var(--danger) !important;
             background: var(--wrong-bg) !important;
         }
-        .soal-card.correct .soal-icon {
-            color: var(--success);
-        }
-        .soal-card.wrong .soal-icon {
-            color: var(--danger);
-        }
 
         .soal-nomor {
             font-weight: 700;
@@ -234,30 +256,21 @@
             color: var(--text-light);
             min-width: 32px;
             text-align: center;
-            flex-shrink: 0;
-        }
-        .soal-icon {
-            font-size: 1.3rem;
-            flex-shrink: 0;
-            color: var(--primary);
-            font-weight: 700;
-            min-width: 24px;
-            text-align: center;
         }
         .soal-teks {
             font-size: 1.15rem;
             font-weight: 600;
             letter-spacing: 0.5px;
-            flex-shrink: 0;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
             min-width: 140px;
             color: var(--text);
-            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
         }
         .soal-teks .operator {
             color: var(--primary);
             margin: 0 4px;
             font-weight: 700;
         }
+
         .soal-input {
             width: 80px;
             padding: 8px 10px;
@@ -269,8 +282,8 @@
             transition: var(--transition);
             outline: none;
             background: #fafafa;
+            font-family: 'JetBrains Mono', monospace;
             color: var(--text);
-            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
         }
         .soal-input:focus {
             border-color: var(--primary);
@@ -287,13 +300,22 @@
             background: #fef2f2 !important;
             color: #991b1b !important;
         }
+        .soal-input:disabled {
+            opacity: 0.85;
+            cursor: not-allowed;
+            background: #f3f4f6;
+            color: #6b7280;
+            border-color: #d1d5db;
+            font-weight: 600;
+        }
+
         .soal-feedback {
             font-size: 0.8rem;
             font-weight: 600;
             margin-left: auto;
-            flex-shrink: 0;
             min-width: 60px;
             text-align: right;
+            flex-shrink: 0;
         }
         .feedback-correct {
             color: var(--success);
@@ -302,50 +324,136 @@
             color: var(--danger);
         }
 
-        /* Bottom */
         .bottom-bar {
             text-align: center;
             padding-bottom: 40px;
         }
-        .bottom-bar .btn {
-            margin: 4px;
-        }
 
-        /* Confetti sederhana */
         .perfect-score {
             animation: pulse 0.6s ease-in-out 3;
         }
         @keyframes pulse {
-            0%,
-            100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.04);
-            }
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+
+        /* Indikator fullscreen */
+        #fullscreenIndicator {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            z-index: 998;
+            display: none;
+            pointer-events: none;
+            font-weight: 500;
+        }
+
+        /* Tombol keluar tersembunyi */
+        #secretExitBtn {
+            position: fixed;
+            bottom: 10px;
+            right: 60px;
+            width: 28px;
+            height: 28px;
+            background: rgba(255,255,255,0.25);
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 50%;
+            color: rgba(0,0,0,0.4);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: default;
+            z-index: 999;
+            transition: all 0.2s;
+            user-select: none;
+            backdrop-filter: blur(2px);
+        }
+        #secretExitBtn:hover {
+            background: rgba(255,255,255,0.5);
+            border-color: rgba(0,0,0,0.2);
+            color: #333;
+            cursor: pointer;
+        }
+
+        /* Overlay peringatan fullscreen (tanpa tombol) */
+        #fullscreenWarningOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer; /* mengindikasikan area bisa diklik */
+        }
+        #fullscreenWarningOverlay .warning-box {
+            background: white;
+            border-radius: 24px;
+            padding: 30px 40px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            pointer-events: none; /* agar klik tetap tembus ke overlay */
+        }
+        .warning-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        .warning-text {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #b91c1c;
+            margin-bottom: 8px;
+        }
+        .warning-sub {
+            color: #4b5563;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
 
+    <!-- Overlay peringatan fullscreen (muncul saat keluar, tidak ada tombol OK) -->
+    <div id="fullscreenWarningOverlay">
+        <div class="warning-box">
+            <div class="warning-icon">⚠️</div>
+            <div class="warning-text">Jangan keluar dari mode ujian!</div>
+            <div class="warning-sub">Klik di mana saja untuk kembali</div>
+        </div>
+    </div>
+
     <div class="container">
-        <!-- Header -->
+        <!-- Header dengan tombol minimize -->
         <div class="header-card" id="headerCard">
-            <h1>📐 Latihan Bilangan Bulat</h1>
+            <div class="header-top">
+                <h1>📐 Latihan Bilangan Bulat</h1>
+                <button class="btn-minimize" id="togglePanelBtn" onclick="toggleInfoPanel()" title="Minimize / Expand panel">–</button>
+            </div>
             <p class="subtitle">Penjumlahan & Pengurangan — 50 Soal</p>
-            <div class="input-group">
-                <label for="namaInput">👤 Nama:</label>
-                <input type="text" id="namaInput" placeholder="Masukkan namamu..." autocomplete="off">
-            </div>
-            <div class="score-bar" id="scoreBar" style="display:none;">
-                <span class="score-item">✅ Benar: <span class="score-value score-correct" id="skorBenar">0</span></span>
-                <span class="score-item">❌ Salah: <span class="score-value score-wrong" id="skorSalah">0</span></span>
-                <span class="score-item">📊 Nilai: <span class="score-value score-total" id="skorTotal">0</span>/50</span>
-            </div>
-            <div style="margin-top:14px;">
-                <button class="btn btn-check" onclick="koreksiSemua()" title="Periksa semua jawaban">🔍 Koreksi Semua</button>
-                <button class="btn btn-reset" onclick="resetSemua()" title="Hapus semua jawaban">🔄 Reset</button>
-                <button class="btn btn-reset" onclick="acakUlangSoal()" title="Acak ulang soal">🎲 Acak Ulang</button>
+
+            <div class="info-panel" id="infoPanel">
+                <div class="input-group">
+                    <label for="namaInput">👤 Nama:</label>
+                    <input type="text" id="namaInput" placeholder="Masukkan namamu..." autocomplete="off">
+                </div>
+                <div class="score-bar" id="scoreBar" style="display: none;">
+                    <span>✅ Benar: <span class="score-value score-correct" id="skorBenar">0</span></span>
+                    <span>❌ Salah: <span class="score-value score-wrong" id="skorSalah">0</span></span>
+                    <span>📊 Nilai: <span class="score-value score-total" id="skorTotal">0</span>/50</span>
+                </div>
+                <div style="margin-top: 4px;">
+                    <button class="btn btn-koreksi" onclick="koreksiSemua()">🔍 Koreksi Semua</button>
+                    <button class="btn btn-reset" onclick="resetDanAcak()">🔄 Reset (Acak Ulang)</button>
+                </div>
             </div>
         </div>
 
@@ -354,35 +462,131 @@
 
         <!-- Bottom -->
         <div class="bottom-bar">
-            <button class="btn btn-check" onclick="koreksiSemua()">🔍 Koreksi Semua</button>
+            <button class="btn btn-koreksi" onclick="koreksiSemua()">🔍 Koreksi Semua</button>
             <button class="btn btn-reset" onclick="scrollToTop()">⬆ Kembali ke Atas</button>
         </div>
     </div>
 
-    <script>
-        // ==================== GENERATE 50 SOAL ====================
-        const jumlahSoal = 50;
-        let soalData = []; // array of { a, b, operator, jawabanBenar }
+    <!-- Indikator fullscreen & tombol keluar tersembunyi -->
+    <div id="fullscreenIndicator">⛓️ Fullscreen aktif</div>
+    <div id="secretExitBtn" title="Klik dua kali untuk keluar dari mode ujian">🔓</div>
 
+    <script>
+        const jumlahSoal = 50;
+        let soalData = [];
+        let sesiTerkunci = false;
+        let fullscreenLockActive = true;
+
+        // ===================== FULLSCREEN LOCK =====================
+        const warningOverlay = document.getElementById('fullscreenWarningOverlay');
+
+        function requestFullscreen() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen().catch(() => {});
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
+            }
+        }
+
+        function handleFullscreenChange() {
+            const indicator = document.getElementById('fullscreenIndicator');
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                // Keluar fullscreen terdeteksi
+                if (fullscreenLockActive) {
+                    // Tampilkan overlay peringatan (tanpa tombol)
+                    warningOverlay.style.display = 'flex';
+                    indicator.style.display = 'none';
+                    // Coba masuk fullscreen (biasanya butuh gesture, tapi kita akan andalkan klik overlay)
+                } else {
+                    warningOverlay.style.display = 'none';
+                    indicator.style.display = 'none';
+                }
+            } else {
+                // Fullscreen aktif
+                warningOverlay.style.display = 'none';
+                if (fullscreenLockActive) {
+                    indicator.style.display = 'block';
+                } else {
+                    indicator.style.display = 'none';
+                }
+            }
+        }
+
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+
+        // Klik pada overlay untuk kembali ke fullscreen
+        warningOverlay.addEventListener('click', function(e) {
+            if (fullscreenLockActive) {
+                requestFullscreen();
+            }
+        });
+
+        // Inisialisasi fullscreen pada interaksi pertama
+        document.addEventListener('click', function initFullscreen() {
+            if (fullscreenLockActive && !document.fullscreenElement && !document.webkitFullscreenElement) {
+                requestFullscreen();
+            }
+        }, { once: false });
+
+        // ===================== TOMBOL KELUAR TERSEMBUNYI =====================
+        let clickTimer = null;
+        document.getElementById('secretExitBtn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (clickTimer === null) {
+                clickTimer = setTimeout(() => {
+                    clickTimer = null;
+                }, 600);
+            } else {
+                clearTimeout(clickTimer);
+                clickTimer = null;
+                keluarDariModeUjian();
+            }
+        });
+
+        function keluarDariModeUjian() {
+            const konfirmasi = confirm('⚠️ Apakah Anda yakin ingin keluar dari mode ujian?\n\n' +
+                '• Mode fullscreen akan dilepas.\n' +
+                '• Data nama akan dihapus dari browser.\n' +
+                '• Anda dapat menutup halaman dengan bebas.');
+            if (!konfirmasi) return;
+
+            fullscreenLockActive = false;
+            warningOverlay.style.display = 'none';
+
+            if (document.fullscreenElement || document.webkitFullscreenElement) {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+            }
+
+            localStorage.removeItem('latihanBilBulat_nama');
+            document.getElementById('namaInput').value = '';
+            document.getElementById('fullscreenIndicator').style.display = 'none';
+
+            alert('✅ Mode ujian telah berakhir. Data nama telah dihapus. Anda sekarang bisa menutup halaman.');
+        }
+
+        // ===================== GENERATE SOAL =====================
         function generateSoal() {
             soalData = [];
             for (let i = 0; i < jumlahSoal; i++) {
-                // Tentukan operator: 0 = penjumlahan, 1 = pengurangan
                 const operatorType = Math.random() < 0.5 ? 'tambah' : 'kurang';
                 let a, b, jawaban;
-
                 if (operatorType === 'tambah') {
-                    // Penjumlahan: a + b
                     a = randomInt(-25, 30);
                     b = randomInt(-25, 30);
                     jawaban = a + b;
                 } else {
-                    // Pengurangan: a - b
                     a = randomInt(-25, 30);
                     b = randomInt(-25, 30);
                     jawaban = a - b;
                 }
-
                 soalData.push({
                     a: a,
                     b: b,
@@ -396,18 +600,15 @@
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
-        // ==================== RENDER SOAL ====================
         function renderSoal() {
             const grid = document.getElementById('soalGrid');
             grid.innerHTML = '';
-
             soalData.forEach((soal, index) => {
                 const card = document.createElement('div');
                 card.className = 'soal-card';
                 card.id = 'soalCard-' + index;
                 card.innerHTML = `
                     <span class="soal-nomor">${index + 1}</span>
-                    <span class="soal-icon">📝</span>
                     <span class="soal-teks">
                         ${soal.a} <span class="operator">${soal.operator}</span> ${soal.b} = 
                     </span>
@@ -426,11 +627,10 @@
             });
         }
 
-        // ==================== KOREKSI ====================
         function koreksiSemua() {
             const nama = document.getElementById('namaInput').value.trim();
             if (!nama) {
-                alert('⚠️ Silakan isi nama terlebih dahulu ya!');
+                alert('⚠️ Silakan isi nama terlebih dahulu!');
                 document.getElementById('namaInput').focus();
                 return;
             }
@@ -444,14 +644,12 @@
                 const feedbackEl = document.getElementById('feedback-' + i);
                 const jawabanUser = inputEl.value.trim();
 
-                // Reset class
                 inputEl.classList.remove('correct-input', 'wrong-input');
                 cardEl.classList.remove('correct', 'wrong');
                 feedbackEl.textContent = '';
                 feedbackEl.className = 'soal-feedback';
 
                 if (jawabanUser === '') {
-                    // Kosong dianggap salah
                     salah++;
                     cardEl.classList.add('wrong');
                     inputEl.classList.add('wrong-input');
@@ -460,21 +658,18 @@
                 } else {
                     const jawabanAngka = parseInt(jawabanUser, 10);
                     if (isNaN(jawabanAngka)) {
-                        // Bukan angka
                         salah++;
                         cardEl.classList.add('wrong');
                         inputEl.classList.add('wrong-input');
                         feedbackEl.textContent = '✗ Bukan angka';
                         feedbackEl.className = 'soal-feedback feedback-wrong';
                     } else if (jawabanAngka === soalData[i].jawabanBenar) {
-                        // Benar
                         benar++;
                         cardEl.classList.add('correct');
                         inputEl.classList.add('correct-input');
                         feedbackEl.textContent = '✓ Benar!';
                         feedbackEl.className = 'soal-feedback feedback-correct';
                     } else {
-                        // Salah
                         salah++;
                         cardEl.classList.add('wrong');
                         inputEl.classList.add('wrong-input');
@@ -482,15 +677,16 @@
                         feedbackEl.className = 'soal-feedback feedback-wrong';
                     }
                 }
+                inputEl.disabled = true;
             }
 
-            // Update score bar
             document.getElementById('scoreBar').style.display = 'flex';
             document.getElementById('skorBenar').textContent = benar;
             document.getElementById('skorSalah').textContent = salah;
             document.getElementById('skorTotal').textContent = benar;
 
-            // Highlight header jika perfect
+            sesiTerkunci = true;
+
             const headerCard = document.getElementById('headerCard');
             headerCard.classList.remove('perfect-score');
             if (benar === jumlahSoal) {
@@ -500,20 +696,38 @@
                 }, 300);
             }
 
-            // Scroll ke atas
+            localStorage.setItem('latihanBilBulat_nama', nama);
+
             setTimeout(() => {
                 document.getElementById('headerCard').scrollIntoView({ behavior: 'smooth' });
             }, 150);
-
-            // Simpan nama ke localStorage
-            localStorage.setItem('latihanBilBulat_nama', nama);
         }
 
-        // ==================== HANDLE ENTER ====================
+        function resetDanAcak() {
+            sesiTerkunci = false;
+            generateSoal();
+            renderSoal();
+
+            document.getElementById('scoreBar').style.display = 'none';
+            document.getElementById('headerCard').classList.remove('perfect-score');
+            document.getElementById('skorBenar').textContent = '0';
+            document.getElementById('skorSalah').textContent = '0';
+            document.getElementById('skorTotal').textContent = '0';
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            const firstInput = document.getElementById('input-0');
+            if (firstInput) {
+                setTimeout(() => firstInput.focus(), 200);
+            }
+        }
+
         function handleEnter(event, index) {
             if (event.key === 'Enter') {
                 event.preventDefault();
-                // Pindah ke input berikutnya
+                if (sesiTerkunci) {
+                    alert('📌 Sesi sudah dikoreksi. Klik "Reset" untuk memulai sesi baru.');
+                    return;
+                }
                 const nextIndex = index + 1;
                 if (nextIndex < jumlahSoal) {
                     const nextInput = document.getElementById('input-' + nextIndex);
@@ -522,68 +736,36 @@
                         nextInput.select();
                     }
                 } else {
-                    // Jika soal terakhir, langsung koreksi
                     koreksiSemua();
                 }
             }
-        }
-
-        // ==================== RESET ====================
-        function resetSemua() {
-            for (let i = 0; i < jumlahSoal; i++) {
-                const inputEl = document.getElementById('input-' + i);
-                const cardEl = document.getElementById('soalCard-' + i);
-                const feedbackEl = document.getElementById('feedback-' + i);
-                if (inputEl) inputEl.value = '';
-                if (inputEl) {
-                    inputEl.classList.remove('correct-input', 'wrong-input');
-                }
-                if (cardEl) {
-                    cardEl.classList.remove('correct', 'wrong');
-                }
-                if (feedbackEl) {
-                    feedbackEl.textContent = '';
-                    feedbackEl.className = 'soal-feedback';
-                }
-            }
-            document.getElementById('scoreBar').style.display = 'none';
-            document.getElementById('headerCard').classList.remove('perfect-score');
-            document.getElementById('skorBenar').textContent = '0';
-            document.getElementById('skorSalah').textContent = '0';
-            document.getElementById('skorTotal').textContent = '0';
-            // Fokus ke input pertama
-            const firstInput = document.getElementById('input-0');
-            if (firstInput) firstInput.focus();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function acakUlangSoal() {
-            resetSemua();
-            generateSoal();
-            renderSoal();
-            document.getElementById('scoreBar').style.display = 'none';
-            document.getElementById('headerCard').classList.remove('perfect-score');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            const firstInput = document.getElementById('input-0');
-            if (firstInput) setTimeout(() => firstInput.focus(), 200);
         }
 
         function scrollToTop() {
             document.getElementById('headerCard').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // ==================== INIT ====================
+        function toggleInfoPanel() {
+            const header = document.getElementById('headerCard');
+            const btn = document.getElementById('togglePanelBtn');
+            header.classList.toggle('collapsed');
+            if (header.classList.contains('collapsed')) {
+                btn.textContent = '+';
+            } else {
+                btn.textContent = '–';
+            }
+        }
+
         function init() {
             generateSoal();
             renderSoal();
+            sesiTerkunci = false;
 
-            // Load nama dari localStorage
             const savedNama = localStorage.getItem('latihanBilBulat_nama');
             if (savedNama) {
                 document.getElementById('namaInput').value = savedNama;
             }
 
-            // Fokus ke input nama atau soal pertama
             const namaInput = document.getElementById('namaInput');
             if (!savedNama) {
                 namaInput.focus();
@@ -593,7 +775,6 @@
                 }, 300);
             }
 
-            // Simpan nama saat berubah
             namaInput.addEventListener('input', function() {
                 const val = this.value.trim();
                 if (val) {
@@ -602,18 +783,7 @@
             });
         }
 
-        // Jalankan saat halaman siap
         document.addEventListener('DOMContentLoaded', init);
-
-        // ==================== SERVICE WORKER SEDERHANA UNTUK OFFLINE (OPSIONAL) ====================
-        // Tidak wajib, tapi membantu jika ingin digunakan offline
-        if ('serviceWorker' in navigator) {
-            // Kosong, hanya placeholder. Aplikasi tetap berjalan tanpa service worker.
-        }
-
-        console.log('✅ Aplikasi Latihan Penjumlahan & Pengurangan Bilangan Bulat siap!');
-        console.log('   📝 50 soal telah digenerate secara acak.');
-        console.log('   👤 Isi nama, jawab soal, lalu klik "Koreksi Semua" atau tekan Enter di soal terakhir.');
     </script>
 </body>
-  </html>
+</html>
