@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Latihan Matematika • Pilih Materi</title>
+    <script>
+        MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+    <style>
+        :root {
+            --bg: #f0f4f8;
+            --card-bg: #ffffff;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --success: #10b981;
+            --danger: #ef4444;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --radius: 16px;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f0f4ff 30%, #fdf2f8 70%, #fce7f3 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        #menuContainer {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 32px 24px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        #menuContainer h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .menu-subtitle {
+            color: var(--text-light);
+            margin-bottom: 24px;
+            font-size: 1rem;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .menu-btn {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            padding: 18px 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+            transition: 0.2s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .menu-btn:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.15);
+            background: #f8f8ff;
+        }
+
+        .menu-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .menu-btn .info {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            font-weight: 400;
+        }
+
+        .nama-section {
+            margin-top: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nama-section input {
+            padding: 10px 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            width: 220px;
+            transition: 0.2s;
+            outline: none;
+            background: #f8fafc;
+        }
+
+        .nama-section input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            background: #fff;
+        }
+
+        #quizContainer {
+            display: none;
+        }
+
+        .header-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px 28px 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-kembali {
+            background: none;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 6px 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            color: var(--text-light);
+        }
+
+        .btn-kembali:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            color: var(--text);
+        }
+
+        .quiz-title {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--primary);
+        }
+
+        .nama-display {
+            font-weight: 500;
+            color: var(--text-light);
+            background: #f1f5f9;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .score-panel {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            flex-wrap: wrap;
+        }
+
+        .soal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 500px) {
+            .soal-grid {
+                grid-template-columns: 1fr;
+            }
+            .header-card {
+                padding: 14px;
+            }
+        }
+
+        .soal-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px 18px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 2px solid var(--border);
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .soal-card.correct {
+            border-color: var(--success) !important;
+            background: #d1fae5 !important;
+        }
+
+        .soal-card.wrong {
+            border-color: var(--danger) !important;
+            background: #fee2e2 !important;
+        }
+
+        .soal-nomor {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            min-width: 28px;
+        }
+
+        .soal-teks {
+            font-size: 1.15rem;
+            font-weight: 600;
+            min-width: 100px;
+            color: var(--text);
+        }
+
+        .soal-teks .operator {
+            color: var(--primary);
+            margin: 0 4px;
+            font-weight: 700;
+        }
+
+        .soal-input {
+            width: 90px;
+            padding: 8px 10px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            transition: 0.2s;
+            outline: none;
+            background: #fafafa;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .soal-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.08);
+            background: #fff;
+        }
+
+        .soal-input.correct-input {
+            border-color: var(--success) !important;
+            background: #ecfdf5 !important;
+            color: #065f46 !important;
+        }
+
+        .soal-input.wrong-input {
+            border-color: var(--danger) !important;
+            background: #fef2f2 !important;
+            color: #991b1b !important;
+        }
+
+        .soal-input:disabled {
+            opacity: 0.85;
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .soal-feedback {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: auto;
+            min-width: 60px;
+            text-align: right;
+        }
+
+        .feedback-correct { color: var(--success); }
+        .feedback-wrong { color: var(--danger); }
+
+        .btn {
+            padding: 10px 22px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin: 4px;
+        }
+
+        .btn-koreksi {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-koreksi:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+        }
+
+        .btn-reset {
+            background: #fff;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .btn-reset:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .timer-display {
+            font-weight: 700;
+            color: #b45309;
+            background: #ffedd5;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+        }
+
+        .single-quiz-area {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 32px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .single-quiz-area .soal-teks {
+            font-size: 2rem;
+            margin: 20px 0;
+        }
+
+        #fullscreenWarningOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .warning-box {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+            max-width: 400px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="fullscreenWarningOverlay">
+        <div class="warning-box">
+            <div style="font-size:3rem;">🚫</div>
+            <h2 style="color:#b91c1c;">JANGAN KELUAR!</h2>
+            <p>Mode ujian terkunci. Klik di sini untuk kembali.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="menuContainer">
+            <h1>📐 Latihan Matematika</h1>
+            <p class="menu-subtitle">Pilih materi yang ingin kamu latih</p>
+            <div class="menu-grid">
+                <button class="menu-btn" onclick="startQuiz('bulat_tambah_kurang')">
+                    <span class="menu-icon">🔢</span>
+                    <span><strong>1. Penjumlahan & Pengurangan Bilangan Bulat</strong><br><span class="info">50 soal</span></span>
+                </button>
+                <button class="menu-btn" onclick="startQuiz('pecahan_tambah_kurang')">
+                    <span class="menu-icon">➕➖</span>
+                    <span><strong>2. Penjumlahan & Pengurangan Pecahan</strong><br><span class="info">20 soal</span></span>
+                </button>
+                <button class="menu-btn" onclick="startQuiz('bulat_kali_timer')">
+                    <span class="menu-icon">⏱️✖️</span>
+                    <span><strong>3. Perkalian Bilangan Bulat (2–9)</strong><br><span class="info">10 soal • timer 10 detik/soal</span></span>
+                </button>
+                <button class="menu-btn" onclick="startQuiz('pecahan_kali')">
+                    <span class="menu-icon">✖️</span>
+                    <span><strong>4. Perkalian Pecahan</strong><br><span class="info">15 soal</span></span>
+                </button>
+                <button class="menu-btn" onclick="startQuiz('bulat_bagi')">
+                    <span class="menu-icon">➗</span>
+                    <span><strong>5. Pembagian Bilangan Bulat</strong><br><span class="info">20 soal</span></span>
+                </button>
+                <button class="menu-btn" onclick="startQuiz('pecahan_bagi')">
+                    <span class="menu-icon">➗</span>
+                    <span><strong>6. Pembagian Pecahan</strong><br><span class="info">15 soal</span></span>
+                </button>
+            </div>
+            <div class="nama-section">
+                <label style="font-weight:600;">👤 Nama:</label>
+                <input type="text" id="namaInputMenu" placeholder="Masukkan namamu...">
+            </div>
+        </div>
+
+        <div id="quizContainer">
+            <div class="header-card" id="quizHeader">
+                <div class="header-left">
+                    <button class="btn-kembali" onclick="kembaliKeMenu()">← Menu</button>
+                    <span class="quiz-title" id="quizTitle">Judul Materi</span>
+                    <span class="nama-display" id="displayNama"></span>
+                </div>
+                <div class="score-panel" id="scorePanel" style="display:none;">
+                    <span>✅ <span id="skorBenar">0</span></span>
+                    <span>❌ <span id="skorSalah">0</span></span>
+                    <span>📊 <span id="skorTotal">0</span></span>
+                </div>
+                <div id="timerContainer" style="display:none;"></div>
+            </div>
+            <div id="quizContent"></div>
+            <div style="text-align:center; margin-top:12px;" id="actionButtons">
+                <button class="btn btn-koreksi" id="btnKoreksiGlobal" onclick="koreksiSemua()">🔍 Koreksi Semua</button>
+                <button class="btn btn-reset" onclick="resetQuiz()">🔄 Ulangi Materi</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let soalData = [];
+        let jawabanUser = [];
+        let currentQuizType = null;
+        let currentMode = 'grid';
+        let timerInterval = null;
+        let timerSeconds = 0;
+        let singleSoalIndex = 0;
+        let quizSelesai = false;
+        let fullscreenLockActive = true;
+
+        const warningOverlay = document.getElementById('fullscreenWarningOverlay');
+
+        function requestFullscreen() {
+            const elem = document.documentElement;
+            (elem.requestFullscreen || elem.webkitRequestFullscreen || elem.msRequestFullscreen).call(elem).catch(() => {});
+        }
+
+        function isFullscreen() {
+            return !!(document.fullscreenElement || document.webkitFullscreenElement);
+        }
+
+        function updateWarningState() {
+            if (!fullscreenLockActive) {
+                warningOverlay.style.display = 'none';
+                return;
+            }
+            warningOverlay.style.display = isFullscreen() ? 'none' : 'flex';
+            if (!isFullscreen() && window.navigator && window.navigator.vibrate) {
+                window.navigator.vibrate(200);
+            }
+        }
+
+        document.addEventListener('fullscreenchange', updateWarningState);
+        document.addEventListener('webkitfullscreenchange', updateWarningState);
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') updateWarningState();
+        });
+        warningOverlay.addEventListener('click', () => {
+            if (fullscreenLockActive && !isFullscreen()) requestFullscreen();
+        });
+        setInterval(() => {
+            if (fullscreenLockActive && !isFullscreen()) updateWarningState();
+        }, 500);
+        document.addEventListener('click', function initFs() {
+            if (fullscreenLockActive && !isFullscreen()) requestFullscreen();
+        }, { once: false });
+
+        document.addEventListener('focusin', (e) => {
+            if (e.target.classList.contains('soal-input')) {
+                setTimeout(() => {
+                    e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            }
+        });
+
+        function showMenu() {
+            document.getElementById('menuContainer').style.display = 'block';
+            document.getElementById('quizContainer').style.display = 'none';
+            clearTimer();
+            const saved = localStorage.getItem('latihanMatematika_nama');
+            if (saved) document.getElementById('namaInputMenu').value = saved;
+        }
+
+        function showQuiz() {
+            document.getElementById('menuContainer').style.display = 'none';
+            document.getElementById('quizContainer').style.display = 'block';
+            const nama = document.getElementById('namaInputMenu').value.trim();
+            if (nama) {
+                localStorage.setItem('latihanMatematika_nama', nama);
+                document.getElementById('displayNama').textContent = '👤 ' + nama;
+            } else {
+                document.getElementById('displayNama').textContent = '';
+            }
+            document.getElementById('scorePanel').style.display = 'none';
+            document.getElementById('btnKoreksiGlobal').style.display = 'inline-flex';
+        }
+
+        function kembaliKeMenu() {
+            if (timerInterval) {
+                if (!confirm('Yakin ingin kembali? Progress latihan akan hilang.')) return;
+            }
+            clearTimer();
+            quizSelesai = false;
+            showMenu();
+        }
+
+        function randomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        const denoms = [1, 2, 4, 5, 10, 20, 25, 50, 100];
+        function randomSimpleFraction() {
+            const d = denoms[Math.floor(Math.random() * denoms.length)];
+            const n = randomInt(1, d * 5);
+            return { n, d };
+        }
+
+        function gcd(a, b) {
+            a = Math.abs(a); b = Math.abs(b);
+            while (b) { [a, b] = [b, a % b]; }
+            return a;
+        }
+
+        function simplifyFraction(n, d) {
+            const g = gcd(n, d);
+            return { n: n / g, d: d / g };
+        }
+
+        function randomPecahanOperand() {
+            const typeRand = Math.random();
+            let value, display;
+            if (typeRand < 0.35) {
+                const { n, d } = randomSimpleFraction();
+                value = n / d;
+                display = `\\frac{${n}}{${d}}`;
+            } else if (typeRand < 0.65) {
+                const bulat = randomInt(1, 5);
+                const { n, d } = randomSimpleFraction();
+                const frac = simplifyFraction(n, d);
+                value = bulat + frac.n / frac.d;
+                display = `${bulat}\\frac{${frac.n}}{${frac.d}}`;
+            } else if (typeRand < 0.85) {
+                const des = (randomInt(1, 99) / 100).toFixed(2);
+                value = parseFloat(des);
+                display = des;
+            } else {
+                const persen = randomInt(5, 95);
+                value = persen / 100;
+                display = `${persen}\\%`;
+            }
+            return { value, display };
+        }
+
+        function generateSoalByType(type) {
+            soalData = [];
+            let jumlah = 0;
+            switch (type) {
+                case 'bulat_tambah_kurang': jumlah = 50; break;
+                case 'pecahan_tambah_kurang': jumlah = 20; break;
+                case 'bulat_kali_timer': jumlah = 10; break;
+                case 'pecahan_kali': jumlah = 15; break;
+                case 'bulat_bagi': jumlah = 20; break;
+                case 'pecahan_bagi': jumlah = 15; break;
+            }
+
+            for (let i = 0; i < jumlah; i++) {
+                let a, b, jawaban, displayA, displayB, op;
+                if (type === 'bulat_tambah_kurang') {
+                    a = randomInt(-25, 30);
+                    b = randomInt(-25, 30);
+                    op = Math.random() < 0.5 ? '+' : '−';
+                    jawaban = op === '+' ? a + b : a - b;
+                    displayA = a; displayB = b;
+                } else if (type === 'bulat_kali_timer') {
+                    // Basis 2 sampai 9 (positif)
+                    a = randomInt(2, 9);
+                    b = randomInt(2, 9);
+                    op = '×';
+                    jawaban = a * b;
+                    displayA = a; displayB = b;
+                } else if (type === 'bulat_bagi') {
+                    b = randomInt(-12, 12);
+                    if (b === 0) b = 1;
+                    jawaban = randomInt(-12, 12);
+                    a = jawaban * b;
+                    op = '÷';
+                    displayA = a; displayB = b;
+                } else {
+                    const op1 = randomPecahanOperand();
+                    const op2 = randomPecahanOperand();
+                    displayA = op1.display;
+                    displayB = op2.display;
+                    a = op1.value; b = op2.value;
+                    if (type === 'pecahan_tambah_kurang') {
+                        op = Math.random() < 0.5 ? '+' : '−';
+                        jawaban = op === '+' ? a + b : a - b;
+                    } else if (type === 'pecahan_kali') {
+                        op = '×';
+                        jawaban = a * b;
+                    } else if (type === 'pecahan_bagi') {
+                        op = '÷';
+                        jawaban = b !== 0 ? a / b : 0;
+                    }
+                    jawaban = parseFloat(jawaban.toFixed(4));
+                }
+                soalData.push({
+                    a, b, op,
+                    jawabanBenar: jawaban,
+                    displayA, displayB,
+                    isPecahan: type.includes('pecahan')
+                });
+            }
+        }
+
+        function clearTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function renderSoalGrid() {
+            const container = document.getElementById('quizContent');
+            container.innerHTML = '<div class="soal-grid" id="soalGrid"></div>';
+            const grid = document.getElementById('soalGrid');
+            soalData.forEach((soal, idx) => {
+                const card = document.createElement('div');
+                card.className = 'soal-card';
+                card.id = 'soalCard-' + idx;
+                let teksSoal = '';
+                if (soal.isPecahan) {
+                    teksSoal = `\\(${soal.displayA} \\ ${soal.op === '×' ? '\\times' : soal.op === '÷' ? '\\div' : soal.op} \\ ${soal.displayB} = \\)`;
+                } else {
+                    teksSoal = `${soal.displayA} <span class="operator">${soal.op}</span> ${soal.displayB} = `;
+                }
+                card.innerHTML = `
+                    <span class="soal-nomor">${idx + 1}</span>
+                    <span class="soal-teks">${teksSoal}</span>
+                    <input type="text" class="soal-input" id="input-${idx}" placeholder="?" autocomplete="off" inputmode="decimal" onkeydown="handleEnterGrid(event, ${idx})">
+                    <span class="soal-feedback" id="feedback-${idx}"></span>
+                `;
+                grid.appendChild(card);
+            });
+            if (soalData.some(s => s.isPecahan)) {
+                MathJax.typesetPromise([container]).catch(console.error);
+            }
+        }
+
+        function renderSingleQuiz() {
+            const container = document.getElementById('quizContent');
+            container.innerHTML = '<div class="single-quiz-area" id="singleArea"></div>';
+            document.getElementById('timerContainer').style.display = 'inline-block';
+            document.getElementById('btnKoreksiGlobal').style.display = 'none';
+            singleSoalIndex = 0;
+            jawabanUser = new Array(soalData.length).fill('');
+            tampilkanSoalSingle();
+        }
+
+        function tampilkanSoalSingle() {
+            if (singleSoalIndex >= soalData.length) {
+                selesaiSingleQuiz();
+                return;
+            }
+            const soal = soalData[singleSoalIndex];
+            const area = document.getElementById('singleArea');
+            let teks = '';
+            if (soal.isPecahan) {
+                teks = `\\(${soal.displayA} \\ ${soal.op === '×' ? '\\times' : soal.op === '÷' ? '\\div' : soal.op} \\ ${soal.displayB} = \\)`;
+            } else {
+                teks = `${soal.displayA} <span class="operator">${soal.op}</span> ${soal.displayB} = `;
+            }
+            area.innerHTML = `
+                <div style="font-weight:700;">Soal ${singleSoalIndex + 1} dari ${soalData.length}</div>
+                <div class="soal-teks" style="font-size:2rem; margin:20px 0;">${teks}</div>
+                <input type="text" id="singleInput" class="soal-input" style="width:140px; font-size:1.2rem;" placeholder="Jawaban" autocomplete="off" inputmode="decimal">
+                <button class="btn btn-koreksi" id="btnNextSingle" style="margin-left:10px;">Selanjutnya ➡️</button>
+                <div id="singleTimer" class="timer-display" style="margin-top:12px;"></div>
+            `;
+            document.getElementById('btnNextSingle').addEventListener('click', nextSingleSoal);
+            document.getElementById('singleInput').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') nextSingleSoal();
+            });
+            timerSeconds = 10;
+            updateTimerDisplay();
+            clearTimer();
+            timerInterval = setInterval(() => {
+                timerSeconds--;
+                updateTimerDisplay();
+                if (timerSeconds <= 0) {
+                    clearTimer();
+                    nextSingleSoal(true);
+                }
+            }, 1000);
+            MathJax.typesetPromise([area]).catch(console.error);
+            document.getElementById('singleInput').focus();
+        }
+
+        function updateTimerDisplay() {
+            const el = document.getElementById('singleTimer');
+            if (el) el.textContent = `⏳ ${timerSeconds} detik`;
+        }
+
+        function nextSingleSoal(waktuHabis = false) {
+            const input = document.getElementById('singleInput');
+            if (input) {
+                jawabanUser[singleSoalIndex] = input.value.trim();
+            }
+            singleSoalIndex++;
+            tampilkanSoalSingle();
+        }
+
+        function selesaiSingleQuiz() {
+            clearTimer();
+            document.getElementById('timerContainer').style.display = 'none';
+            document.getElementById('singleArea').innerHTML = '<h3>⏹️ Semua soal selesai. Klik "Koreksi Semua" untuk melihat hasil.</h3>';
+            document.getElementById('btnKoreksiGlobal').style.display = 'inline-flex';
+            quizSelesai = true;
+        }
+
+        function parseJawaban(jawabanStr, isPecahan) {
+            if (jawabanStr === '') return NaN;
+            return parseFloat(jawabanStr.replace(',', '.'));
+        }
+
+        function koreksiSemua() {
+            const nama = document.getElementById('namaInputMenu').value.trim();
+            if (!nama) {
+                alert('⚠️ Isi nama terlebih dahulu di menu!');
+                return;
+            }
+            if (currentMode === 'single') {
+                let benar = 0, salah = 0;
+                const container = document.getElementById('quizContent');
+                container.innerHTML = '<div class="soal-grid" id="soalGrid"></div>';
+                const grid = document.getElementById('soalGrid');
+                soalData.forEach((soal, idx) => {
+                    const card = document.createElement('div');
+                    card.className = 'soal-card';
+                    const jwb = jawabanUser[idx] || '';
+                    const nilai = parseJawaban(jwb, soal.isPecahan);
+                    const benarSoal = !isNaN(nilai) && Math.abs(nilai - soal.jawabanBenar) < 0.001;
+                    if (benarSoal) benar++; else salah++;
+                    card.classList.add(benarSoal ? 'correct' : 'wrong');
+                    let teks = soal.isPecahan ?
+                        `\\(${soal.displayA} \\ ${soal.op === '×' ? '\\times' : soal.op === '÷' ? '\\div' : soal.op} \\ ${soal.displayB} = \\)` :
+                        `${soal.displayA} <span class="operator">${soal.op}</span> ${soal.displayB} =`;
+                    card.innerHTML = `
+                        <span class="soal-nomor">${idx+1}</span>
+                        <span class="soal-teks">${teks}</span>
+                        <input class="soal-input ${benarSoal?'correct-input':'wrong-input'}" value="${jwb}" disabled>
+                        <span class="soal-feedback ${benarSoal?'feedback-correct':'feedback-wrong'}">${benarSoal ? '✓' : '✗ Jwb: '+soal.jawabanBenar.toFixed(2).replace(/\.00$/,'')}</span>
+                    `;
+                    grid.appendChild(card);
+                });
+                document.getElementById('scorePanel').style.display = 'flex';
+                document.getElementById('skorBenar').textContent = benar;
+                document.getElementById('skorSalah').textContent = salah;
+                document.getElementById('skorTotal').textContent = benar;
+                document.getElementById('btnKoreksiGlobal').style.display = 'none';
+                MathJax.typesetPromise([container]).catch(console.error);
+                quizSelesai = true;
+                return;
+            }
+
+            let benar = 0, salah = 0;
+            for (let i = 0; i < soalData.length; i++) {
+                const inputEl = document.getElementById('input-' + i);
+                if (!inputEl) continue;
+                const cardEl = document.getElementById('soalCard-' + i);
+                const fbEl = document.getElementById('feedback-' + i);
+                const jwb = inputEl.value.trim();
+                inputEl.classList.remove('correct-input', 'wrong-input');
+                cardEl.classList.remove('correct', 'wrong');
+                const nilai = parseJawaban(jwb, soalData[i].isPecahan);
+                const benarSoal = !isNaN(nilai) && Math.abs(nilai - soalData[i].jawabanBenar) < 0.001;
+                if (benarSoal) {
+                    benar++;
+                    cardEl.classList.add('correct');
+                    inputEl.classList.add('correct-input');
+                    fbEl.textContent = '✓';
+                    fbEl.className = 'soal-feedback feedback-correct';
+                } else {
+                    salah++;
+                    cardEl.classList.add('wrong');
+                    inputEl.classList.add('wrong-input');
+                    fbEl.textContent = '✗ Jwb: ' + soalData[i].jawabanBenar.toFixed(2).replace(/\.00$/, '');
+                    fbEl.className = 'soal-feedback feedback-wrong';
+                }
+                inputEl.disabled = true;
+            }
+            document.getElementById('scorePanel').style.display = 'flex';
+            document.getElementById('skorBenar').textContent = benar;
+            document.getElementById('skorSalah').textContent = salah;
+            document.getElementById('skorTotal').textContent = benar;
+            document.getElementById('btnKoreksiGlobal').style.display = 'none';
+            quizSelesai = true;
+        }
+
+        function resetQuiz() {
+            clearTimer();
+            quizSelesai = false;
+            generateSoalByType(currentQuizType);
+            if (currentMode === 'grid') {
+                renderSoalGrid();
+                document.getElementById('scorePanel').style.display = 'none';
+                document.getElementById('btnKoreksiGlobal').style.display = 'inline-flex';
+            } else {
+                renderSingleQuiz();
+                document.getElementById('scorePanel').style.display = 'none';
+            }
+        }
+
+        function handleEnterGrid(event, idx) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                if (quizSelesai) return;
+                const next = idx + 1;
+                if (next < soalData.length) {
+                    const nextInput = document.getElementById('input-' + next);
+                    if (nextInput) { nextInput.focus(); nextInput.select(); }
+                } else {
+                    koreksiSemua();
+                }
+            }
+        }
+
+        function startQuiz(type) {
+            const nama = document.getElementById('namaInputMenu').value.trim();
+            if (!nama) {
+                alert('⚠️ Silakan isi nama terlebih dahulu!');
+                return;
+            }
+            localStorage.setItem('latihanMatematika_nama', nama);
+            currentQuizType = type;
+            generateSoalByType(type);
+            quizSelesai = false;
+            clearTimer();
+
+            currentMode = (type === 'bulat_kali_timer') ? 'single' : 'grid';
+
+            const titles = {
+                'bulat_tambah_kurang': 'Penjumlahan & Pengurangan Bilangan Bulat (50 soal)',
+                'pecahan_tambah_kurang': 'Penjumlahan & Pengurangan Pecahan (20 soal)',
+                'bulat_kali_timer': 'Perkalian Bilangan Bulat 2–9 (10 soal • 10 detik/soal)',
+                'pecahan_kali': 'Perkalian Pecahan (15 soal)',
+                'bulat_bagi': 'Pembagian Bilangan Bulat (20 soal)',
+                'pecahan_bagi': 'Pembagian Pecahan (15 soal)'
+            };
+            document.getElementById('quizTitle').textContent = titles[type];
+            document.getElementById('displayNama').textContent = '👤 ' + nama;
+
+            document.getElementById('timerContainer').style.display = 'none';
+            document.getElementById('scorePanel').style.display = 'none';
+            document.getElementById('btnKoreksiGlobal').style.display = 'inline-flex';
+
+            if (currentMode === 'grid') {
+                renderSoalGrid();
+            } else {
+                renderSingleQuiz();
+            }
+            showQuiz();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            showMenu();
+            updateWarningState();
+        });
+    </script>
+</body>
+</html>
