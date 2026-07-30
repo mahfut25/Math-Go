@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>Ujian & Latihan Matematika</title>
+  <style>
+    :root {
+      --bg: #f0f4f8;
+      --card: #ffffff;
+      --primary: #4a6cf7;
+      --primary-dark: #3651d5;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --text: #1e293b;
+      --text-light: #64748b;
+      --border: #e2e8f0;
+      --shadow: 0 4px 24px rgba(0,0,0,0.08);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --transition: 0.25s ease;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #e8edf5 0%, #dce3ed 30%, #eef1f7 60%, #e4e9f2 100%);
+      min-height: 100vh;
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+    .header {
+      background: var(--card); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px;
+      box-shadow: var(--shadow); text-align: center; border: 1px solid var(--border);
+    }
+    .header h1 { font-size: 1.7rem; font-weight: 700; color: var(--primary); margin-bottom: 4px; letter-spacing: -0.3px; }
+    .header .subtitle { font-size: 0.9rem; color: var(--text-light); font-weight: 500; }
+    .timer-bar {
+      background: var(--card); border-radius: var(--radius); padding: 16px 22px; margin-bottom: 20px;
+      box-shadow: var(--shadow); display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      flex-wrap: wrap; border: 1px solid var(--border); position: sticky; top: 16px; z-index: 100;
+    }
+    .timer-display {
+      font-size: 2rem; font-weight: 700; font-variant-numeric: tabular-nums;
+      font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace; color: var(--primary); min-width: 100px; text-align: center;
+    }
+    .timer-display.warning { color: var(--warning); animation: pulse 0.8s infinite; }
+    .timer-display.danger { color: var(--danger); animation: pulse 0.45s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+    .timer-label { font-weight: 600; font-size: 0.85rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.6px; }
+    .badge {
+      display: inline-block; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.3px;
+    }
+    .badge-primary { background: #eef2ff; color: var(--primary); }
+    .badge-success { background: #ecfdf5; color: var(--success); }
+    .card {
+      background: var(--card); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px;
+      box-shadow: var(--shadow); border: 1px solid var(--border); transition: var(--transition);
+    }
+    .card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+    .icon-blue { background: #eef2ff; color: var(--primary); width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+    .icon-green { background: #ecfdf5; color: var(--success); width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+    .question-item {
+      padding: 14px 16px; margin-bottom: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+      background: #fafbfc; transition: var(--transition);
+    }
+    .question-item:hover { border-color: #cbd5e1; background: #fff; }
+    .question-item.answered { border-color: #b2c9ff; background: #f8faff; }
+    .q-number { font-weight: 700; color: var(--primary); font-size: 0.85rem; margin-bottom: 4px; }
+    .q-text { font-weight: 600; margin-bottom: 8px; font-size: 1rem; }
+    .options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .option-label {
+      display: flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 8px; cursor: pointer;
+      border: 2px solid var(--border); background: #fff; font-weight: 500; font-size: 0.9rem; transition: var(--transition);
+      user-select: none; flex: 1; min-width: 100px; justify-content: center;
+    }
+    .option-label:hover { border-color: #b2c9ff; background: #f8faff; }
+    .option-label input[type="radio"] { display: none; }
+    .option-label.selected {
+      border-color: var(--primary); background: #eef2ff; color: var(--primary); font-weight: 700;
+      box-shadow: 0 0 0 3px rgba(74,108,247,0.1);
+    }
+    .option-letter {
+      font-weight: 700; width: 22px; height: 22px; border-radius: 50%; background: #e2e8f0;
+      display: flex; align-items: center; justify-content: center; font-size: 0.75rem;
+    }
+    .option-label.selected .option-letter { background: var(--primary); color: #fff; }
+    .option-text { display: flex; align-items: center; }
+
+    .frac {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      vertical-align: middle;
+      font-size: 0.9em;
+      line-height: 1;
+      margin: 0 2px;
+    }
+    .frac-num, .frac-den {
+      padding: 0 2px;
+    }
+    .frac-line {
+      display: block;
+      width: 100%;
+      height: 1px;
+      background: currentColor;
+      margin: 1px 0;
+    }
+    .mixed-number {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .part2-container { text-align: center; }
+    .big-question { font-size: 4rem; font-weight: 800; letter-spacing: 2px; color: var(--text); margin: 20px 0; font-family: 'SF Mono','Cascadia Code','Consolas',monospace; }
+    .countdown-circle {
+      width: 90px; height: 90px; border-radius: 50%; border: 6px solid var(--border); display: flex;
+      align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 2rem; font-weight: 700;
+      transition: all 0.3s ease; font-family: 'SF Mono','Cascadia Code','Consolas',monospace;
+    }
+    .countdown-circle.warning { border-color: var(--warning); color: var(--warning); animation: pulse 0.6s infinite; }
+    .countdown-circle.danger { border-color: var(--danger); color: var(--danger); animation: pulse 0.35s infinite; }
+    .answer-input {
+      font-size: 1.4rem; padding: 14px 20px; border-radius: 12px; border: 3px solid var(--border);
+      text-align: center; width: 160px; font-weight: 700; outline: none; transition: var(--transition);
+      font-family: 'SF Mono','Cascadia Code','Consolas',monospace;
+    }
+    .answer-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(74,108,247,0.1); }
+    .answer-input.correct-flash { border-color: var(--success); background: #ecfdf5; box-shadow: 0 0 0 8px rgba(16,185,129,0.15); }
+    .answer-input.wrong-flash { border-color: var(--danger); background: #fef2f2; box-shadow: 0 0 0 8px rgba(239,68,68,0.15); }
+    .progress-part2 { height: 8px; background: #e2e8f0; border-radius: 10px; margin: 16px 0; overflow: hidden; }
+    .progress-part2-fill { height: 100%; background: var(--primary); border-radius: 10px; transition: width 0.4s ease; }
+    .btn {
+      display: inline-block; padding: 12px 28px; border-radius: 10px; font-weight: 700; font-size: 0.95rem;
+      cursor: pointer; border: none; letter-spacing: 0.3px; transition: var(--transition); text-align: center;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(74,108,247,0.3); }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-outline { background: #fff; color: var(--primary); border: 2px solid var(--primary); }
+    .btn-outline:hover { background: #eef2ff; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+    .btn-lg { padding: 16px 40px; font-size: 1.1rem; border-radius: 14px; }
+    .result-card { text-align: center; }
+    .result-icon { font-size: 5rem; margin-bottom: 10px; }
+    .result-status { font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; }
+    .result-status.lulus { color: var(--success); }
+    .result-status.tidak-lulus { color: var(--danger); }
+    .score-grid { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin: 20px 0; }
+    .score-box {
+      background: #f8fafc; border-radius: var(--radius-sm); padding: 18px 22px; text-align: center;
+      border: 1px solid var(--border); min-width: 120px;
+    }
+    .score-box .score-num { font-size: 2.2rem; font-weight: 700; color: var(--primary); }
+    .score-box .score-label { font-size: 0.8rem; color: var(--text-light); font-weight: 600; text-transform: uppercase; }
+    .hidden { display: none !important; }
+    .feedback-mini { display: inline-block; padding: 4px 12px; border-radius: 14px; font-weight: 700; font-size: 0.8rem; animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from{opacity:0;transform:scale(0.9)} to{opacity:1;transform:scale(1)} }
+    .feedback-benar { background: #ecfdf5; color: #059669; }
+    .feedback-salah { background: #fef2f2; color: #dc2626; }
+    .start-form { text-align: center; }
+    .start-form input {
+      font-size: 1.2rem; padding: 12px 20px; border-radius: 10px; border: 2px solid var(--border);
+      outline: none; width: 80%; max-width: 300px; text-align: center; font-weight: 600; margin: 16px 0;
+    }
+    .start-form input:focus { border-color: var(--primary); }
+    .start-form input:disabled { opacity: 0.6; background: #e5e7eb; cursor: not-allowed; }
+    .mode-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+    @media (max-width: 640px) {
+      .header h1{font-size:1.3rem} .big-question{font-size:2.6rem} .timer-display{font-size:1.4rem}
+      .options{flex-direction:column;gap:5px} .option-label{min-width:auto;justify-content:flex-start}
+      .card{padding:16px 12px} .question-item{padding:10px 8px}
+      .countdown-circle{width:65px;height:65px;font-size:1.5rem;border-width:4px}
+      .answer-input{font-size:1.1rem;width:120px;padding:10px 14px}
+      .score-box{min-width:80px;padding:12px 14px} .score-box .score-num{font-size:1.5rem}
+    }
+
+    /* ========== FULLSCREEN LOCK STYLES ========== */
+    #fullscreenWarningOverlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.88); z-index: 99999;
+      display: none; justify-content: center; align-items: center;
+      cursor: pointer; touch-action: manipulation;
+    }
+    #fullscreenWarningOverlay .warning-box {
+      background: white; border-radius: 24px; padding: 30px 40px; text-align: center;
+      max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      pointer-events: none; margin: 20px;
+    }
+    #fullscreenWarningOverlay .warning-icon { font-size: 3.5rem; margin-bottom: 10px; }
+    #fullscreenWarningOverlay .warning-text { font-size: 1.4rem; font-weight: 700; color: #b91c1c; margin-bottom: 12px; }
+    #fullscreenWarningOverlay .warning-sub { color: #4b5563; font-size: 1rem; margin-bottom: 6px; }
+    #fullscreenWarningOverlay .warning-action { font-weight: 600; color: #1e40af; margin-top: 8px; font-size: 0.9rem; }
+
+    #fullscreenIndicator {
+      position: fixed; bottom: 10px; right: 10px;
+      background: rgba(0,0,0,0.5); color: #fff; padding: 4px 10px;
+      border-radius: 20px; font-size: 0.7rem; z-index: 998;
+      display: none; pointer-events: none; font-weight: 500;
+    }
+    #secretExitBtn {
+      position: fixed; bottom: 10px; right: 60px; width: 28px; height: 28px;
+      background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 50%; color: rgba(0,0,0,0.4); font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: default; z-index: 999; transition: all 0.2s;
+      user-select: none; backdrop-filter: blur(2px);
+    }
+    #secretExitBtn:hover { background: rgba(255,255,255,0.5); border-color: rgba(0,0,0,0.2); color: #333; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+<!-- Overlay peringatan fullscreen (tidak bisa ditutup) -->
+<div id="fullscreenWarningOverlay">
+  <div class="warning-box">
+    <div class="warning-icon">🚫</div>
+    <div class="warning-text">JANGAN KELUAR!</div>
+    <div class="warning-sub">Mode ujian terkunci.</div>
+    <div class="warning-action">Klik di sini untuk kembali</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="header">
+    <h1>📐 Ujian Matematika</h1>
+    <p class="subtitle">Masukkan nama & pilih mode untuk memulai</p>
+  </div>
+
+  <!-- Start Screen -->
+  <div class="card" id="startScreen">
+    <div class="start-form">
+      <label style="font-weight:700;display:block;margin-bottom:4px;">Nama Peserta</label>
+      <input type="text" id="inputNama" placeholder="Masukkan nama Anda..." autocomplete="off">
+      <div style="font-weight:600;margin-top:20px;">Pilih Mode:</div>
+      <div class="mode-buttons">
+        <button class="btn btn-primary btn-lg" onclick="startMode('full')">📝 Ujian Lengkap<br><small style="font-weight:400;">Bagian 1 (30 soal) + Bagian 2 (10 soal)</small></button>
+        <button class="btn btn-outline btn-lg" onclick="startMode('practice1')">📋 Latihan Bagian 1<br><small style="font-weight:400;">30 Soal Pilihan Ganda</small></button>
+        <button class="btn btn-outline btn-lg" onclick="startMode('practice2')">⚡ Latihan Bagian 2<br><small style="font-weight:400;">10 Soal Perkalian Cepat</small></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timer Bar -->
+  <div class="timer-bar hidden" id="timerBar">
+    <div><span class="timer-label">⏱ Sisa Waktu</span><div class="timer-display" id="timerDisplay">20:00</div></div>
+    <div><span class="badge badge-primary" id="badgePart">Bagian 1</span></div>
+    <div><span class="timer-label">📝 Soal</span><div style="font-weight:700;font-size:1.1rem;" id="soalProgress">1-30</div></div>
+  </div>
+
+  <!-- Bagian 1 -->
+  <div class="card hidden" id="part1Card">
+    <h3><span class="icon icon-blue">📋</span> Bagian 1 — Pilihan Ganda (30 Soal)</h3>
+    <p style="color:var(--text-light);margin-bottom:16px;font-size:0.9rem;">Waktu: 20 menit.</p>
+    <div id="questionsContainer"></div>
+    <div style="text-align:center;margin-top:20px;">
+      <button class="btn btn-primary btn-lg" id="btnSubmitPart1" onclick="submitPart1()">✅ Selesai Bagian 1</button>
+    </div>
+  </div>
+
+  <!-- Bagian 2 -->
+  <div class="card hidden" id="part2Card">
+    <h3><span class="icon icon-green">⚡</span> Bagian 2 — Perkalian Cepat (10 soal)</h3>
+    <p style="color:var(--text-light);margin-bottom:8px;font-size:0.9rem;">Waktu: <strong>10 detik per soal</strong>.</p>
+    <div class="part2-container">
+      <div class="progress-part2"><div class="progress-part2-fill" id="progressPart2Fill" style="width:0%;"></div></div>
+      <p style="font-weight:600;color:var(--text-light);" id="part2SoalInfo">Soal 1 dari 10</p>
+      <div class="countdown-circle" id="countdownCircle">10</div>
+      <div class="big-question" id="bigQuestion">? × ? = ?</div>
+      <input type="number" class="answer-input" id="answerInput" placeholder="Jawaban..." autocomplete="off">
+      <p style="margin-top:8px;font-size:0.8rem;color:var(--text-light);">Tekan <strong>Enter</strong></p>
+      <div id="feedbackPart2" style="margin-top:10px;min-height:28px;"></div>
+      <div style="margin-top:8px;">
+        <span>Benar: <span id="part2CorrectCount" style="color:var(--success);">0</span></span>
+        <span>Salah: <span id="part2WrongCount" style="color:var(--danger);">0</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="card hidden" id="resultCard">
+    <div class="result-card">
+      <h3>📊 Hasil</h3>
+      <p style="font-weight:700;font-size:1.2rem;" id="resultNama"></p>
+      <div class="result-icon" id="resultIcon"></div>
+      <div class="result-status" id="resultStatus"></div>
+      <div class="score-grid" id="scoreGrid"></div>
+      <p style="font-size:0.9rem;color:var(--text-light);margin-top:8px;" id="resultDetail"></p>
+      <button class="btn btn-primary btn-lg" style="margin-top:16px;" onclick="location.reload()">🔄 Kembali ke Menu</button>
+    </div>
+  </div>
+</div>
+
+<!-- Indikator fullscreen & tombol rahasia -->
+<div id="fullscreenIndicator">⛓️ Fullscreen aktif</div>
+<div id="secretExitBtn" title="Klik dua kali untuk keluar dari mode ujian">🔓</div>
+
+<script>
+(function() {
+  // ========== FULLSCREEN LOCK SYSTEM ==========
+  const warningOverlay = document.getElementById('fullscreenWarningOverlay');
+  let fullscreenLockActive = true;
+
+  function requestFullscreen() {
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen().catch(() => {});
+    } else if (elem.webkitRequestFullscreen) {
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+      elem.msRequestFullscreen();
+    }
+  }
+
+  function isFullscreen() {
+    return !!(document.fullscreenElement || document.webkitFullscreenElement);
+  }
+
+  function updateWarningState() {
+    if (!fullscreenLockActive) {
+      warningOverlay.style.display = 'none';
+      document.getElementById('fullscreenIndicator').style.display = 'none';
+      return;
+    }
+    if (!isFullscreen()) {
+      warningOverlay.style.display = 'flex';
+      document.getElementById('fullscreenIndicator').style.display = 'none';
+      if (window.navigator && window.navigator.vibrate) {
+        window.navigator.vibrate(200);
+      }
+    } else {
+      warningOverlay.style.display = 'none';
+      document.getElementById('fullscreenIndicator').style.display = 'block';
+    }
+  }
+
+  document.addEventListener('fullscreenchange', updateWarningState);
+  document.addEventListener('webkitfullscreenchange', updateWarningState);
+
+  document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') {
+      updateWarningState();
+    }
+  });
+
+  warningOverlay.addEventListener('click', function(e) {
+    if (fullscreenLockActive && !isFullscreen()) {
+      requestFullscreen();
+    }
+  });
+
+  warningOverlay.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+  }, { passive: false });
+
+  document.addEventListener('click', function initFullscreen() {
+    if (fullscreenLockActive && !isFullscreen()) {
+      requestFullscreen();
+    }
+  }, { once: false });
+
+  setInterval(() => {
+    if (fullscreenLockActive && !isFullscreen()) {
+      updateWarningState();
+    }
+  }, 500);
+
+  // Tombol keluar rahasia (klik dua kali)
+  let clickTimer = null;
+  document.getElementById('secretExitBtn').addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (clickTimer === null) {
+      clickTimer = setTimeout(() => { clickTimer = null; }, 600);
+    } else {
+      clearTimeout(clickTimer);
+      clickTimer = null;
+      keluarDariModeUjian();
+    }
+  });
+
+  function keluarDariModeUjian() {
+    const konfirmasi = confirm('⚠️ Apakah Anda yakin ingin keluar dari mode ujian?\n\n• Mode fullscreen akan dilepas.\n• Data nama akan dihapus dari browser.\n• Anda dapat menutup halaman dengan bebas.');
+    if (!konfirmasi) return;
+    fullscreenLockActive = false;
+    warningOverlay.style.display = 'none';
+    if (isFullscreen()) {
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    }
+    localStorage.removeItem('latihanUjianNama');
+    document.getElementById('inputNama').value = '';
+    document.getElementById('inputNama').disabled = false;
+    document.getElementById('fullscreenIndicator').style.display = 'none';
+    alert('✅ Mode ujian telah berakhir. Data nama telah dihapus. Anda sekarang bisa menutup halaman.');
+  }
+
+  // Utility
+  function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+  function randChoice(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  function gcd(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){[a,b]=[b,a%b];} return a||1; }
+  function simplifyFraction(num,den){
+    if(den<0){num=-num;den=-den;} const g=gcd(Math.abs(num),Math.abs(den)); return [num/g,den/g];
+  }
+  function toMixedFraction(num,den){
+    if(den===0)return{whole:0,num:0,den:1}; const [n,d]=simplifyFraction(num,den);
+    const whole=Math.trunc(n/d); const remainder=Math.abs(n%d);
+    if(remainder===0)return{whole:whole,num:0,den:d}; if(whole===0)return{whole:0,num:n,den:d};
+    return{whole:whole,num:remainder,den:d};
+  }
+  function fractionToHTML(num, den) {
+    const [n, d] = simplifyFraction(num, den);
+    if (d === 1) return String(n);
+    const mixed = toMixedFraction(n, d);
+    if (mixed.whole === 0) {
+      const sign = n < 0 ? '-' : '';
+      return `${sign}<span class="frac"><span class="frac-num">${Math.abs(mixed.num)}</span><span class="frac-line"></span><span class="frac-den">${mixed.den}</span></span>`;
+    } else {
+      if (mixed.num === 0) return String(mixed.whole);
+      return `<span class="mixed-number">${mixed.whole} <span class="frac"><span class="frac-num">${mixed.num}</span><span class="frac-line"></span><span class="frac-den">${mixed.den}</span></span></span>`;
+    }
+  }
+
+  function generateDistractors(correctAnswer, type, context={}) {
+    const distractors=new Set(); const correctStr=String(correctAnswer);
+    if(type==='integer'){
+      const correct=parseInt(correctStr); const offsets=[1,-1,2,-2,3,-3,correct*-1,correct+5,correct-5];
+      for(const off of offsets){ const c=correct+off; if(c!==correct && !distractors.has(String(c))) distractors.add(String(c)); if(distractors.size>=3)break; }
+      if(context.a && context.b && context.op){
+        if(context.op==='+'){ distractors.add(String(context.a-context.b)); distractors.add(String(context.a*context.b)); }
+        else if(context.op==='-'){ distractors.add(String(context.a+context.b)); distractors.add(String(-(context.a-context.b))); }
+        else if(context.op==='÷'){ distractors.add(String(context.a*context.b)); distractors.add(String(context.a+context.b)); }
+      }
+    } else if(type==='fraction'){
+      const {num, den} = context;
+      const variations=[[num+1,den],[num-1,den],[num,den+1],[num,den-1],[num+den,den],[num,den*2],[num*2,den]];
+      for(const [n,d] of variations){ if(d<=0||d>20)continue; const candidate=fractionToHTML(n,d); if(candidate!==correctStr && !distractors.has(candidate)) distractors.add(candidate); if(distractors.size>=3)break; }
+    } else if(type==='decimal'){
+      const correct=parseFloat(correctStr.replace(',','.')); const offsets=[0.1,-0.1,0.5,-0.5,1,-1,correct*0.5,correct*2];
+      for(const off of offsets){ const c=Math.round((correct+off)*100)/100; const cStr=String(c).replace('.',','); if(cStr!==correctStr && !distractors.has(cStr)) distractors.add(cStr); if(distractors.size>=3)break; }
+    } else if(type==='percent'){
+      const correct=parseFloat(correctStr.replace('%','').replace(',','.')); const offsets=[5,-5,10,-10,25,-25,correct/2,correct*2];
+      for(const off of offsets){ const c=Math.round(correct+off); const cStr=c+'%'; if(cStr!==correctStr && !distractors.has(cStr) && c>=0 && c<=200) distractors.add(cStr); if(distractors.size>=3)break; }
+    }
+    const fallbacks=['0','1','2','10','100','1/2','0,5','50%']; let i=0;
+    while(distractors.size<3){ const fb=fallbacks[i%fallbacks.length]; if(fb!==correctStr && !distractors.has(fb)) distractors.add(fb); i++; if(i>50)break; }
+    return Array.from(distractors).slice(0,3);
+  }
+
+  function buildQuestionObj(question, correctStr, distractors){
+    const options=[correctStr,...distractors]; for(let i=options.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [options[i],options[j]]=[options[j],options[i]]; }
+    const correctIndex=options.indexOf(correctStr); return {question, options, correctIndex, correctAnswer:correctStr};
+  }
+
+  function genPenjumlahanBulat(){ const a=randInt(-25,30),b=randInt(-20,25); const ans=a+b; return buildQuestionObj(`${a} + (${b}) = ...`, String(ans), generateDistractors(String(ans),'integer',{a,b,op:'+'})); }
+  function genPenguranganBulat(){ const a=randInt(-25,30),b=randInt(-20,25); const ans=a-b; return buildQuestionObj(`${a} - (${b}) = ...`, String(ans), generateDistractors(String(ans),'integer',{a,b,op:'-'})); }
+  function genPembagianBulat(){ const d=randChoice([2,3,4,5,6,7,8,9,10,-2,-3,-4,-5,-6]); const q=randInt(-8,8); const div=d*q; return buildQuestionObj(`${div} ÷ (${d}) = ...`, String(q), generateDistractors(String(q),'integer',{a:div,b:d,op:'÷'})); }
+  function genPerkalianPecahan(){ const n1=randInt(1,6),d1=randInt(2,8),n2=randInt(1,6),d2=randInt(2,8); const rn=n1*n2,rd=d1*d2; const ans=fractionToHTML(rn,rd); return buildQuestionObj(`(${fractionToHTML(n1,d1)}) × (${fractionToHTML(n2,d2)}) = ...`, ans, generateDistractors(ans,'fraction',{num:rn,den:rd})); }
+  function genPembagianPecahan(){ const n1=randInt(1,6),d1=randInt(2,8),n2=randInt(1,6),d2=randInt(2,8); const rn=n1*d2,rd=d1*n2; const ans=fractionToHTML(rn,rd); return buildQuestionObj(`(${fractionToHTML(n1,d1)}) ÷ (${fractionToHTML(n2,d2)}) = ...`, ans, generateDistractors(ans,'fraction',{num:rn,den:rd})); }
+  function genPenjumlahanPecahan(){ const d1=randInt(2,6),d2=randInt(2,6); const n1=randInt(1,d1*2),n2=randInt(1,d2*2); const cd=d1*d2, rn=n1*d2+n2*d1; const ans=fractionToHTML(rn,cd); return buildQuestionObj(`(${fractionToHTML(n1,d1)}) + (${fractionToHTML(n2,d2)}) = ...`, ans, generateDistractors(ans,'fraction',{num:rn,den:cd})); }
+  function genPenguranganPecahan(){ const d1=randInt(2,6),d2=randInt(2,6); const n1=randInt(d1,d1*3),n2=randInt(1,d2*2); const cd=d1*d2, rn=n1*d2-n2*d1; const ans=fractionToHTML(rn,cd); return buildQuestionObj(`(${fractionToHTML(n1,d1)}) - (${fractionToHTML(n2,d2)}) = ...`, ans, generateDistractors(ans,'fraction',{num:rn,den:cd})); }
+  function genOperasiCampuran(){ const w1=randInt(1,4),n1=randInt(1,5),d1=randInt(3,7); const w2=randInt(1,3),n2=randInt(1,4),d2=randInt(3,7); const op=randChoice(['+','-','×']); const imp1=w1*d1+n1, imp2=w2*d2+n2; let rn,rd; if(op==='+'){ rn=imp1*d2+imp2*d1; rd=d1*d2; } else if(op==='-'){ rn=imp1*d2-imp2*d1; rd=d1*d2; } else { rn=imp1*imp2; rd=d1*d2; } const ans=fractionToHTML(rn,rd); const qText=`(${fractionToHTML(imp1,d1)}) ${op==='×'?'×':op} (${fractionToHTML(imp2,d2)}) = ...`; return buildQuestionObj(qText, ans, generateDistractors(ans,'fraction',{num:rn,den:rd})); }
+  function genOperasiDesimal(){ const a=Math.round(randInt(5,45)/10*10)/10, b=Math.round(randInt(5,35)/10*10)/10; const op=randChoice(['+','-','×']); let res; if(op==='+') res=a+b; else if(op==='-') res=a-b; else res=Math.round(a*b*100)/100; const ans=String(res).replace('.',','); const q=`${String(a).replace('.',',')} ${op==='×'?'×':op} ${String(b).replace('.',',')} = ...`; return buildQuestionObj(q, ans, generateDistractors(ans,'decimal')); }
+  function genOperasiPersen(){ const a=randInt(10,90),b=randInt(10,60); const op=randChoice(['+','-']); let res=op==='+'?a+b:Math.max(a-b,5); const ans=res+'%'; return buildQuestionObj(`${a}% ${op} ${b}% = ...`, ans, generateDistractors(ans,'percent')); }
+  function genKonversiPecahanDesimal(){ const f=randChoice([{num:1,den:2,dec:'0,5'},{num:1,den:4,dec:'0,25'},{num:3,den:4,dec:'0,75'},{num:1,den:5,dec:'0,2'},{num:2,den:5,dec:'0,4'},{num:3,den:5,dec:'0,6'},{num:4,den:5,dec:'0,8'},{num:1,den:8,dec:'0,125'},{num:1,den:10,dec:'0,1'}]); return buildQuestionObj(`Ubahlah ${fractionToHTML(f.num,f.den)} menjadi desimal.`, f.dec, generateDistractors(f.dec,'decimal')); }
+  function genKonversiDesimalPersen(){ const p=randChoice([{dec:'0,5',pct:'50%'},{dec:'0,25',pct:'25%'},{dec:'0,75',pct:'75%'},{dec:'0,2',pct:'20%'},{dec:'0,4',pct:'40%'},{dec:'0,6',pct:'60%'},{dec:'0,8',pct:'80%'},{dec:'0,1',pct:'10%'},{dec:'0,05',pct:'5%'},{dec:'1,5',pct:'150%'}]); if(Math.random()<0.5) return buildQuestionObj(`Ubahlah ${p.dec} menjadi persen.`, p.pct, generateDistractors(p.pct,'percent')); else return buildQuestionObj(`Ubahlah ${p.pct} menjadi desimal.`, p.dec, generateDistractors(p.dec,'decimal')); }
+  function genKonversiPersenPecahan(){ const p=randChoice([{pct:'50%',num:1,den:2},{pct:'25%',num:1,den:4},{pct:'75%',num:3,den:4},{pct:'20%',num:1,den:5},{pct:'40%',num:2,den:5},{pct:'60%',num:3,den:5},{pct:'80%',num:4,den:5},{pct:'10%',num:1,den:10},{pct:'30%',num:3,den:10}]); const ans=fractionToHTML(p.num,p.den); return buildQuestionObj(`Ubahlah ${p.pct} menjadi pecahan biasa.`, ans, generateDistractors(ans,'fraction',{num:p.num,den:p.den})); }
+  function genKonversiAcak(){ return randChoice([genKonversiPecahanDesimal, genKonversiDesimalPersen, genKonversiPersenPecahan])(); }
+
+  function generatePart1Questions(){
+    const q=[]; 
+    for(let i=0;i<4;i++) q.push(genPenjumlahanBulat());
+    for(let i=0;i<4;i++) q.push(genPenguranganBulat());
+    for(let i=0;i<4;i++) q.push(genPembagianBulat());
+    for(let i=0;i<3;i++) q.push(genPerkalianPecahan());
+    for(let i=0;i<3;i++) q.push(genPembagianPecahan());
+    for(let i=0;i<3;i++) q.push(genPenjumlahanPecahan());
+    for(let i=0;i<3;i++) q.push(genPenguranganPecahan());
+    for(let i=0;i<2;i++) q.push(genOperasiCampuran());
+    for(let i=0;i<2;i++) q.push(genOperasiDesimal());
+    q.push(genOperasiPersen());
+    q.push(genKonversiAcak());
+    for(let i=q.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [q[i],q[j]]=[q[j],q[i]]; }
+    return q;
+  }
+
+  function generatePart2Questions10(){
+    const q=[]; 
+    for(let base=2;base<=9;base++){ const other=randInt(2,9); if(Math.random()<0.5) q.push({a:base,b:other,answer:base*other}); else q.push({a:other,b:base,answer:other*base}); }
+    for(let i=0;i<2;i++){ const a=randInt(6,9),b=randInt(6,9); q.push({a,b,answer:a*b}); }
+    for(let i=q.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [q[i],q[j]]=[q[j],q[i]]; }
+    return q;
+  }
+
+  // State
+  let namaPeserta = '', mode = 'full', ujianDimulai = false;
+  const questionsPart1 = generatePart1Questions();
+  const questionsPart2 = generatePart2Questions10();
+  let userAnswersPart1 = new Array(30).fill(null);
+  let userAnswersPart2 = new Array(10).fill(null);
+  let part1TimeLeft = 20*60, part1TimerInterval = null;
+  let part2TimeLeft = 10, part2TimerInterval = null;
+  let currentPart2Index = 0, part1Submitted = false, part2Finished = false;
+  let part2CorrectCount = 0, part2WrongCount = 0, isTransitioningPart2 = false;
+
+  // DOM
+  const startScreen=document.getElementById('startScreen'), timerBar=document.getElementById('timerBar');
+  const part1Card=document.getElementById('part1Card'), part2Card=document.getElementById('part2Card'), resultCard=document.getElementById('resultCard');
+  const timerDisplay=document.getElementById('timerDisplay'), badgePart=document.getElementById('badgePart'), soalProgress=document.getElementById('soalProgress');
+  const questionsContainer=document.getElementById('questionsContainer');
+  const countdownCircle=document.getElementById('countdownCircle'), bigQuestion=document.getElementById('bigQuestion'), answerInput=document.getElementById('answerInput');
+  const part2SoalInfo=document.getElementById('part2SoalInfo'), progressPart2Fill=document.getElementById('progressPart2Fill');
+  const feedbackPart2=document.getElementById('feedbackPart2'), part2CorrectCountEl=document.getElementById('part2CorrectCount'), part2WrongCountEl=document.getElementById('part2WrongCount');
+  const btnSubmitPart1=document.getElementById('btnSubmitPart1'), inputNama=document.getElementById('inputNama');
+
+  function renderPart1(){
+    let html='';
+    questionsPart1.forEach((q,idx)=>{
+      html+=`<div class="question-item" id="qItem${idx}"><div class="q-number">Soal ${idx+1}</div><div class="q-text">${q.question}</div><div class="options">`;
+      q.options.forEach((opt,oi)=>{
+        html+=`<label class="option-label" id="optLabel_${idx}_${oi}"><input type="radio" name="q${idx}" value="${oi}" onchange="selectOption(${idx},${oi})"><span class="option-letter">${String.fromCharCode(65+oi)}</span><span class="option-text">${opt}</span></label>`;
+      });
+      html+=`</div></div>`;
+    });
+    questionsContainer.innerHTML=html;
+  }
+
+  window.selectOption = function(qIdx, oIdx){
+    if(part1Submitted) return;
+    userAnswersPart1[qIdx]=oIdx;
+    document.getElementById('qItem'+qIdx)?.classList.add('answered');
+    for(let i=0;i<4;i++) document.getElementById('optLabel_'+qIdx+'_'+i)?.classList.toggle('selected', i===oIdx);
+  };
+
+  function formatTime(s){ const m=Math.floor(s/60), sec=s%60; return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0'); }
+  function startPart1Timer(){
+    updatePart1TimerDisplay();
+    part1TimerInterval=setInterval(()=>{ part1TimeLeft--; updatePart1TimerDisplay(); if(part1TimeLeft<=0){ clearInterval(part1TimerInterval); if(!part1Submitted) submitPart1(); } },1000);
+  }
+  function updatePart1TimerDisplay(){
+    timerDisplay.textContent=formatTime(part1TimeLeft);
+    timerDisplay.classList.remove('warning','danger');
+    if(part1TimeLeft<=60) timerDisplay.classList.add('danger'); else if(part1TimeLeft<=180) timerDisplay.classList.add('warning');
+  }
+
+  function submitPart1(){
+    if(part1Submitted) return;
+    part1Submitted=true;
+    if(part1TimerInterval){clearInterval(part1TimerInterval); part1TimerInterval=null;}
+    btnSubmitPart1.disabled=true;
+    // 🔒 Kunci input nama
+    inputNama.disabled = true;
+    if(mode==='full'){
+      part1Card.classList.add('hidden'); part2Card.classList.remove('hidden');
+      badgePart.textContent='Bagian 2'; badgePart.classList.remove('badge-primary'); badgePart.classList.add('badge-success');
+      soalProgress.textContent='1-10'; timerDisplay.textContent='00:10'; timerDisplay.classList.remove('warning','danger');
+      startPart2();
+    }else if(mode==='practice1'){
+      part1Card.classList.add('hidden'); timerBar.classList.add('hidden'); showResults();
+    }
+  }
+  window.submitPart1=submitPart1;
+
+  function startPart2(){
+    currentPart2Index=0; part2CorrectCount=0; part2WrongCount=0; part2Finished=false; isTransitioningPart2=false;
+    updatePart2Stats(); showPart2Question(); answerInput.focus();
+  }
+  function showPart2Question(){
+    if(currentPart2Index>=questionsPart2.length){ finishPart2(); return; }
+    isTransitioningPart2=false; part2TimeLeft=10;
+    const q=questionsPart2[currentPart2Index];
+    bigQuestion.textContent=`${q.a} × ${q.b} = ?`;
+    answerInput.value=''; answerInput.classList.remove('correct-flash','wrong-flash'); answerInput.disabled=false;
+    feedbackPart2.innerHTML='';
+    part2SoalInfo.textContent=`Soal ${currentPart2Index+1} dari 10`;
+    progressPart2Fill.style.width=((currentPart2Index/questionsPart2.length)*100)+'%';
+    updateCountdownDisplay();
+    answerInput.focus();
+    // Pindahkan fokus dengan aman, atur ulang posisi scroll agar soal tetap terlihat
+    handleKeyboardVisibility();
+    if(part2TimerInterval)clearInterval(part2TimerInterval);
+    part2TimerInterval=setInterval(()=>{ part2TimeLeft--; updateCountdownDisplay(); if(part2TimeLeft<=0){ clearInterval(part2TimerInterval); handlePart2Timeout(); } },1000);
+  }
+
+  // Fungsi untuk menangani keyboard agar soal tidak tertutup
+  function handleKeyboardVisibility() {
+    if (!answerInput) return;
+    // Gunakan visualViewport jika tersedia
+    if (window.visualViewport) {
+      const handleResize = () => {
+        const viewport = window.visualViewport;
+        const currentHeight = viewport.height;
+        const windowHeight = window.innerHeight;
+        // Jika tinggi viewport lebih kecil (keyboard muncul), lakukan scroll ke input
+        if (currentHeight < windowHeight * 0.8) {
+          // Keyboard kemungkinan terbuka, pastikan input terlihat
+          const inputRect = answerInput.getBoundingClientRect();
+          if (inputRect.bottom > currentHeight - 20) {
+            window.scrollBy({
+              top: inputRect.bottom - currentHeight + 50,
+              behavior: 'smooth'
+            });
+          }
+        }
+      };
+      // Panggil langsung setelah fokus, dengan sedikit jeda untuk keyboard muncul
+      setTimeout(handleResize, 350);
+      // Bersihkan event listener sebelumnya
+      window.visualViewport.removeEventListener('resize', handleResize);
+      window.visualViewport.addEventListener('resize', handleResize);
+      // Hapus listener setelah beberapa saat agar tidak mengganggu
+      setTimeout(() => {
+        window.visualViewport.removeEventListener('resize', handleResize);
+      }, 2000);
+    } else {
+      // Fallback: scroll ke input dengan aman
+      setTimeout(() => {
+        const rect = answerInput.getBoundingClientRect();
+        const viewHeight = window.innerHeight;
+        if (rect.bottom > viewHeight - 50) {
+          window.scrollBy({
+            top: rect.bottom - viewHeight + 80,
+            behavior: 'smooth'
+          });
+        }
+      }, 350);
+    }
+  }
+
+  // Bersihkan visualViewport listener saat input blur (keyboard hilang)
+  answerInput.addEventListener('blur', function() {
+    if (window.visualViewport) {
+      window.visualViewport.removeEventListener('resize', handleKeyboardVisibility);
+    }
+  });
+
+  function updateCountdownDisplay(){
+    countdownCircle.textContent=part2TimeLeft;
+    countdownCircle.classList.remove('warning','danger');
+    if(part2TimeLeft<=2) countdownCircle.classList.add('danger'); else if(part2TimeLeft<=4) countdownCircle.classList.add('warning');
+    timerDisplay.textContent='00:'+String(part2TimeLeft).padStart(2,'0');
+    timerDisplay.classList.remove('warning','danger');
+    if(part2TimeLeft<=2) timerDisplay.classList.add('danger'); else if(part2TimeLeft<=4) timerDisplay.classList.add('warning');
+  }
+  function handlePart2Timeout(){
+    if(isTransitioningPart2) return;
+    isTransitioningPart2=true;
+    const q=questionsPart2[currentPart2Index];
+    userAnswersPart2[currentPart2Index]=null; part2WrongCount++; updatePart2Stats();
+    feedbackPart2.innerHTML=`<span class="feedback-mini feedback-salah">⏰ Waktu habis! Jawaban: ${q.answer}</span>`;
+    answerInput.classList.add('wrong-flash'); answerInput.disabled=true;
+    progressPart2Fill.style.width=(((currentPart2Index+1)/questionsPart2.length)*100)+'%';
+    setTimeout(()=>{ currentPart2Index++; showPart2Question(); },800);
+  }
+  function submitPart2Answer(){
+    if(isTransitioningPart2||part2Finished) return;
+    isTransitioningPart2=true; if(part2TimerInterval){clearInterval(part2TimerInterval); part2TimerInterval=null;}
+    const q=questionsPart2[currentPart2Index];
+    const userAns=parseInt(answerInput.value.trim());
+    if(isNaN(userAns)){ userAnswersPart2[currentPart2Index]=null; part2WrongCount++; feedbackPart2.innerHTML=`<span class="feedback-mini feedback-salah">❌ Tidak valid! Jawaban: ${q.answer}</span>`; answerInput.classList.add('wrong-flash'); }
+    else if(userAns===q.answer){ userAnswersPart2[currentPart2Index]=userAns; part2CorrectCount++; feedbackPart2.innerHTML=`<span class="feedback-mini feedback-benar">✅ Benar!</span>`; answerInput.classList.add('correct-flash'); }
+    else { userAnswersPart2[currentPart2Index]=userAns; part2WrongCount++; feedbackPart2.innerHTML=`<span class="feedback-mini feedback-salah">❌ Salah! Jawaban: ${q.answer}</span>`; answerInput.classList.add('wrong-flash'); }
+    answerInput.disabled=true; updatePart2Stats();
+    progressPart2Fill.style.width=(((currentPart2Index+1)/questionsPart2.length)*100)+'%';
+    setTimeout(()=>{ currentPart2Index++; showPart2Question(); },700);
+  }
+  function updatePart2Stats(){ part2CorrectCountEl.textContent=part2CorrectCount; part2WrongCountEl.textContent=part2WrongCount; }
+  function finishPart2(){ part2Finished=true; if(part2TimerInterval){clearInterval(part2TimerInterval);} part2Card.classList.add('hidden'); timerBar.classList.add('hidden'); showResults(); }
+  answerInput.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); submitPart2Answer(); } });
+
+  function showResults(){
+    resultCard.classList.remove('hidden');
+    const corr1 = userAnswersPart1.filter((a,i)=> a===questionsPart1[i].correctIndex).length;
+    const corr2 = (mode==='practice2'||mode==='full') ? part2CorrectCount : 0;
+    document.getElementById('resultNama').textContent=`Nama: ${namaPeserta}`;
+    const grid=document.getElementById('scoreGrid'); let g='';
+    if(mode==='full'||mode==='practice1') g+=`<div class="score-box"><div class="score-num">${corr1}/30</div><div class="score-label">Bagian 1</div></div>`;
+    if(mode==='full'||mode==='practice2') g+=`<div class="score-box"><div class="score-num">${corr2}/10</div><div class="score-label">Bagian 2</div></div>`;
+    if(mode==='full') g+=`<div class="score-box"><div class="score-num">${corr1+corr2}/40</div><div class="score-label">Total</div></div>`;
+    grid.innerHTML=g;
+    const icon=document.getElementById('resultIcon'), status=document.getElementById('resultStatus'), detail=document.getElementById('resultDetail');
+    if(mode==='full'){
+      if(corr1===30 && corr2===10){ icon.textContent='🎉🏆'; status.textContent='LULUS'; status.className='result-status lulus'; detail.textContent='Selamat! Semua soal benar.'; }
+      else { icon.textContent='😔📚'; status.textContent='TIDAK LULUS'; status.className='result-status tidak-lulus'; detail.textContent=`Bagian 1 salah ${30-corr1}, Bagian 2 salah ${10-corr2}.`; }
+    } else { icon.textContent='📋'; status.textContent='LATIHAN'; status.className='result-status'; status.style.color='var(--primary)'; detail.textContent=`Skor: ${corr1+corr2}/${mode==='practice1'?30:10}`; }
+    resultCard.scrollIntoView({behavior:'smooth'});
+  }
+
+  window.startMode = function(selectedMode){
+    namaPeserta = inputNama.value.trim();
+    if(!namaPeserta){ alert('Masukkan nama dulu.'); inputNama.focus(); return; }
+    mode=selectedMode; ujianDimulai = true;
+    // 🔒 Kunci input nama setelah mulai
+    inputNama.disabled = true;
+    localStorage.setItem('latihanUjianNama', namaPeserta);
+    startScreen.classList.add('hidden'); timerBar.classList.remove('hidden');
+    if(mode==='full'||mode==='practice1'){
+      part1Card.classList.remove('hidden'); part2Card.classList.add('hidden'); resultCard.classList.add('hidden');
+      renderPart1(); badgePart.textContent='Bagian 1'; badgePart.classList.add('badge-primary'); badgePart.classList.remove('badge-success');
+      soalProgress.textContent='1-30'; timerDisplay.textContent='20:00'; timerDisplay.classList.remove('warning','danger');
+      part1Submitted=false; part1TimeLeft=20*60; userAnswersPart1=new Array(30).fill(null); btnSubmitPart1.disabled=false;
+      startPart1Timer();
+    } else if(mode==='practice2'){
+      part1Card.classList.add('hidden'); part2Card.classList.remove('hidden'); resultCard.classList.add('hidden');
+      badgePart.textContent='Bagian 2'; badgePart.classList.remove('badge-primary'); badgePart.classList.add('badge-success');
+      soalProgress.textContent='1-10'; timerDisplay.textContent='00:10'; part2Finished=false;
+      userAnswersPart2=new Array(10).fill(null); part2CorrectCount=0; part2WrongCount=0;
+      startPart2();
+    }
+  };
+
+  // Load nama dari localStorage
+  const savedNama = localStorage.getItem('latihanUjianNama');
+  if (savedNama) { inputNama.value = savedNama; }
+
+  // init pre-render
+  renderPart1();
+  part1Card.classList.add('hidden'); part2Card.classList.add('hidden'); resultCard.classList.add('hidden'); timerBar.classList.add('hidden');
+
+  // Pastikan input nama tidak terkunci saat awal
+  inputNama.disabled = false;
+
+  // Cek fullscreen awal
+  updateWarningState();
+})();
+</script>
+</body>
+</html>
