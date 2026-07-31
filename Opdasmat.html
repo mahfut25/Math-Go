@@ -396,16 +396,14 @@
             padding: 30px;
             text-align: center;
             max-width: 400px;
-            pointer-events: none;
+            pointer-events: auto; /* penting agar tombol bisa diklik */
         }
     </style>
 </head>
 <body>
     <div id="fullscreenWarningOverlay">
-        <div class="warning-box">
-            <div style="font-size:3rem;">🚫</div>
-            <h2 style="color:#b91c1c;">JANGAN KELUAR!</h2>
-            <p>Mode ujian terkunci. Klik di sini untuk kembali.</p>
+        <div class="warning-box" id="warningBoxContent">
+            <!-- Diisi dinamis oleh JS -->
         </div>
     </div>
 
@@ -477,12 +475,23 @@
         let singleSoalIndex = 0;
         let quizSelesai = false;
         let fullscreenLockActive = true;
+        let fullscreenSupported = false;
 
         const warningOverlay = document.getElementById('fullscreenWarningOverlay');
+        const warningBoxContent = document.getElementById('warningBoxContent');
+
+        // Deteksi dukungan fullscreen
+        function checkFullscreenSupport() {
+            const doc = document;
+            return !!(doc.fullscreenEnabled || doc.webkitFullscreenEnabled || doc.msFullscreenEnabled);
+        }
 
         function requestFullscreen() {
             const elem = document.documentElement;
-            (elem.requestFullscreen || elem.webkitRequestFullscreen || elem.msRequestFullscreen).call(elem).catch(() => {});
+            const requestMethod = elem.requestFullscreen || elem.webkitRequestFullscreen || elem.msRequestFullscreen;
+            if (requestMethod) {
+                requestMethod.call(elem).catch(() => {});
+            }
         }
 
         function isFullscreen() {
@@ -490,31 +499,68 @@
         }
 
         function updateWarningState() {
-            if (!fullscreenLockActive) {
+            if (!fullscreenLockActive || !fullscreenSupported) {
                 warningOverlay.style.display = 'none';
                 return;
             }
-            warningOverlay.style.display = isFullscreen() ? 'none' : 'flex';
-            if (!isFullscreen() && window.navigator && window.navigator.vibrate) {
-                window.navigator.vibrate(200);
+            if (!isFullscreen()) {
+                warningOverlay.style.display = 'flex';
+                // Di perangkat yang tidak support, overlay tidak akan muncul karena fullscreenSupported=false
+            } else {
+                warningOverlay.style.display = 'none';
             }
         }
 
-        document.addEventListener('fullscreenchange', updateWarningState);
-        document.addEventListener('webkitfullscreenchange', updateWarningState);
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') updateWarningState();
-        });
-        warningOverlay.addEventListener('click', () => {
-            if (fullscreenLockActive && !isFullscreen()) requestFullscreen();
-        });
-        setInterval(() => {
-            if (fullscreenLockActive && !isFullscreen()) updateWarningState();
-        }, 500);
-        document.addEventListener('click', function initFs() {
-            if (fullscreenLockActive && !isFullscreen()) requestFullscreen();
-        }, { once: false });
+        function setupFullscreen() {
+            fullscreenSupported = checkFullscreenSupport();
+            if (!fullscreenSupported) {
+                // Nonaktifkan lock dan jangan tampilkan overlay peringatan
+                fullscreenLockActive = false;
+                warningOverlay.style.display = 'none';
+                console.log('Fullscreen tidak didukung, mode ujian bebas.');
+                return;
+            }
 
+            // Pasang event listener hanya jika didukung
+            document.addEventListener('fullscreenchange', updateWarningState);
+            document.addEventListener('webkitfullscreenchange', updateWarningState);
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') updateWarningState();
+            });
+
+            // Klik pada overlay untuk meminta fullscreen
+            warningOverlay.addEventListener('click', (e) => {
+                if (fullscreenLockActive && !isFullscreen()) {
+                    requestFullscreen();
+                }
+            });
+
+            // Cek periodik (fallback)
+            setInterval(() => {
+                if (fullscreenLockActive && !isFullscreen()) {
+                    updateWarningState();
+                }
+            }, 500);
+
+            // Coba langsung fullscreen saat klik pertama di dokumen
+            document.addEventListener('click', function initFs() {
+                if (fullscreenLockActive && !isFullscreen()) {
+                    requestFullscreen();
+                }
+            }, { once: false });
+
+            // Tampilkan isi overlay peringatan
+            warningBoxContent.innerHTML = `
+                <div style="font-size:3rem;">🚫</div>
+                <h2 style="color:#b91c1c;">JANGAN KELUAR!</h2>
+                <p>Mode ujian terkunci. Klik di sini untuk kembali.</p>
+            `;
+        }
+
+        // Jalankan deteksi awal
+        setupFullscreen();
+
+        // Scroll otomatis saat input fokus
         document.addEventListener('focusin', (e) => {
             if (e.target.classList.contains('soal-input')) {
                 setTimeout(() => {
@@ -622,7 +668,6 @@
                     jawaban = op === '+' ? a + b : a - b;
                     displayA = a; displayB = b;
                 } else if (type === 'bulat_kali_timer') {
-                    // Basis 2 sampai 9 (positif)
                     a = randomInt(2, 9);
                     b = randomInt(2, 9);
                     op = '×';
@@ -913,6 +958,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             showMenu();
+            // Pastikan overlay tidak muncul jika tidak support
             updateWarningState();
         });
     </script>
