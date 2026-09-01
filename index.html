@@ -319,6 +319,12 @@
       <input type="text" id="gameCode" placeholder="🔑 Masukkan kode game">
       <button id="loadGameBtn" class="btn-import"><i class="fa-solid fa-download"></i> Load Game</button>
 
+      <!-- Tambahan tombol import file -->
+      <button id="importGameFileBtn" class="btn-import" style="margin-top:4px;">
+        <i class="fa-solid fa-file-arrow-up"></i> Import Game File
+      </button>
+      <input type="file" id="gameFileInput" accept=".json" style="display:none;">
+
       <input type="text" id="playerName" placeholder="👤 Nama Pemain">
       <input type="text" id="playerClass" placeholder="🏫 Kelas">
 
@@ -435,7 +441,7 @@
           }
         });
 
-        // IMPORT HANDLER
+        // IMPORT HANDLER (untuk admin)
         document.getElementById('importFileInput').addEventListener('change', handleImportFile);
         document.getElementById('clearImportBtn').addEventListener('click', clearImports);
       }
@@ -466,28 +472,55 @@
           const res = await fetch(code + ".json");
           if (!res.ok) throw new Error("File tidak ditemukan");
           const data = await res.json();
-          allBoxes = migrateBoxes(data.boxes || []);
-          gameDuration = data.gameDuration || 30;
-          document.getElementById('timerInput').value = gameDuration;
-          if (data.targetBoxCount) {
-            targetBoxCount = data.targetBoxCount;
-            document.getElementById('soalCountInput').value = targetBoxCount;
-          } else {
-            targetBoxCount = 10;
-            document.getElementById('soalCountInput').value = 10;
-          }
-          if (data.polygonPath) {
-            path = data.polygonPath;
-            polygon = path;
-            if (polygonLayer) map.removeLayer(polygonLayer);
-            polygonLayer = L.polygon(path, { color: '#ef4444', fillOpacity: 0.15, weight: 3 }).addTo(map);
-          }
-          updateProgressDisplay();
+          loadGameFromObject(data);
           alert("🎮 Game berhasil dimuat! (" + allBoxes.length + " soal, main " + targetBoxCount + " soal)");
         } catch (e) {
           alert("Gagal load game: " + e.message);
         }
       };
+
+      // Fungsi untuk memuat data game dari objek
+      function loadGameFromObject(data) {
+        allBoxes = migrateBoxes(data.boxes || []);
+        gameDuration = data.gameDuration || 30;
+        document.getElementById('timerInput').value = gameDuration;
+        if (data.targetBoxCount) {
+          targetBoxCount = data.targetBoxCount;
+          document.getElementById('soalCountInput').value = targetBoxCount;
+        } else {
+          targetBoxCount = 10;
+          document.getElementById('soalCountInput').value = 10;
+        }
+        if (data.polygonPath) {
+          path = data.polygonPath;
+          polygon = path;
+          if (polygonLayer) map.removeLayer(polygonLayer);
+          polygonLayer = L.polygon(path, { color: '#ef4444', fillOpacity: 0.15, weight: 3 }).addTo(map);
+        }
+        updateProgressDisplay();
+      }
+
+      // Event listener untuk tombol import file game
+      document.getElementById('importGameFileBtn').onclick = () => {
+        document.getElementById('gameFileInput').click();
+      };
+
+      document.getElementById('gameFileInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          try {
+            const data = JSON.parse(ev.target.result);
+            loadGameFromObject(data);
+            alert("🎮 Game berhasil dimuat dari file! (" + allBoxes.length + " soal, main " + targetBoxCount + " soal)");
+          } catch (err) {
+            alert("Gagal memuat file game: " + err.message);
+          }
+          e.target.value = ''; // Reset input agar bisa memilih file yang sama lagi
+        };
+        reader.readAsText(file);
+      });
 
       function migrateBoxes(boxes) {
         return boxes.map(b => {
@@ -503,7 +536,7 @@
         });
       }
 
-      // ========================= IMPORT SOAL =========================
+      // ========================= IMPORT SOAL (Admin) =========================
       function handleImportFile(e) {
         const file = e.target.files[0];
         if (!file) return;
